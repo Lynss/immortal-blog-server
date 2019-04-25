@@ -1,8 +1,8 @@
 use actix_web::{Json, Result};
 use serde::Serialize;
 
-use crate::common::Immortal;
-use crate::model::ImmortalResponse;
+use crate::commons::Immortal;
+use crate::models::ImmortalResponse;
 
 pub fn success<T: Serialize>(data: T) -> Result<Json<ImmortalResponse<T>>> {
     Ok(Json(ImmortalResponse::success(data)))

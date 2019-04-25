@@ -1,4 +1,4 @@
-pub mod util;
+pub mod utils;
 
 pub enum Immortal {
     Success,
@@ -31,4 +31,4 @@ impl Immortal {
     }
 }
 
-pub const LOG_CONFIG: &'static str = "config/log4rs.yaml";
+pub const LOG_CONFIG: &'static str = "configs/log4rs.yaml";

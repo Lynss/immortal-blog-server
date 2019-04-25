@@ -1,8 +1,8 @@
 use actix_web::{AsyncResponder, Query, State};
 use futures::Future;
 
-use crate::common::{Immortal, util};
-use crate::model::{AppState, GetUser, HandlerResponse, ImmortalUser};
+use crate::commons::{Immortal, utils};
+use crate::models::{AppState, GetUser, HandlerResponse, ImmortalUser};
 
 #[derive(Deserialize)]
 pub struct Info {
@@ -19,8 +19,8 @@ pub fn get_users(
         })
         .from_err()
         .and_then(|result| match result {
-            Ok(users) => util::success(users),
-            Err(_) => util::fail(Immortal::InternalError("Failed to load users".into())),
+            Ok(users) => utils::success(users),
+            Err(_) => utils::fail(Immortal::InternalError("Failed to load users".into())),
         })
         .responder()
 }

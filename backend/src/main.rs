@@ -18,11 +18,11 @@ use dotenv::dotenv;
 use listenfd::ListenFd;
 use server::{HttpServer, IntoHttpHandler};
 
-use common::LOG_CONFIG;
+use commons::LOG_CONFIG;
 
-mod common;
-mod handler;
-mod model;
+mod commons;
+mod handlers;
+mod models;
 mod router;
 
 pub trait HotListener {
@@ -39,7 +39,7 @@ where
         if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
             self.listen(l)
         } else {
-            self.bind("127.0.0.1:3000").unwrap()
+            self.bind("127.0.0.1:8080").unwrap()
         }
     }
 }
@@ -47,6 +47,6 @@ where
 fn main() {
     dotenv().ok();
     log4rs::init_file(LOG_CONFIG, Default::default()).unwrap();
-    info!("Server started on http://localhost:3000");
+    info!("Server started on http://localhost:8080");
     server::new(router::init_with_state).hot_listen().run();
 }

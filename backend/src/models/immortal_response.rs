@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::common::Immortal;
+use crate::commons::Immortal;
 
 #[derive(Serialize)]
 pub struct ImmortalResponse<T: Serialize> {

@@ -5,8 +5,8 @@ use actix_web::{
 };
 
 use crate::{
-    handler,
-    model::{AppState, DBExecutor},
+    handlers,
+    models::{AppState, DBExecutor},
 };
 
 pub fn init_with_state() -> App<AppState> {
@@ -24,7 +24,7 @@ pub fn init_with_state() -> App<AppState> {
             ])
             .max_age(3600)
             .resource("/api/user", |r| {
-                r.method(Method::GET).with_async(handler::get_users)
+                r.method(Method::GET).with_async(handlers::get_users)
             })
             .register()
     })
