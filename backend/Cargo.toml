@@ -5,6 +5,7 @@ authors = ["龙云 <longyun@co-mall.com>"]
 edition = "2018"
 
 [dependencies]
+commons = { path="../commons" }
 listenfd = "0.3"
 actix-web = "0.7.18"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }
@@ -17,3 +18,4 @@ log4rs = { version = "0.8.3", features = ["rolling_file_appender", "compound_pol
 log = "0.4.6"
 futures = "0.1.26"
 chrono = { version = "0.4.6", features = ["serde"] }
+jsonwebtoken = "6.0.0"

@@ -1,6 +1,7 @@
+use actix_web::HttpResponse;
 use serde::Serialize;
 
-use crate::commons::Immortal;
+use crate::Immortal;
 
 #[derive(Serialize)]
 pub struct ImmortalResponse<T: Serialize> {

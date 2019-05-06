@@ -1,3 +1,18 @@
+extern crate actix_web;
+#[macro_use]
+extern crate failure;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+
+pub use immortal_error::*;
+pub use immortal_response::*;
+use std::result;
+
+pub mod configs;
+mod immortal_error;
+mod immortal_response;
+pub mod middlewares;
 pub mod utils;
 
 pub enum Immortal {
@@ -31,4 +46,4 @@ impl Immortal {
     }
 }
 
-pub const LOG_CONFIG: &'static str = "configs/log4rs.yaml";
+pub type Result<T, E = ImmortalError> = result::Result<T, E>;

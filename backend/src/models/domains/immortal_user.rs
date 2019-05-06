@@ -4,10 +4,10 @@ use chrono::NaiveDateTime;
 #[derive(Queryable, Serialize)]
 pub struct ImmortalUser {
     id: i32,
-    nick_name: String,
+    nickname: String,
     password: String,
     role: Vec<String>,
-    email: Option<String>,
+    email: String,
     phone: Option<String>,
     sex: i32,
     created_at: NaiveDateTime,

@@ -8,10 +8,10 @@ table! {
 table! {
     immortal_user (id) {
         id -> Int4,
-        nick_name -> Varchar,
+        nickname -> Varchar,
         password -> Varchar,
         role -> Array<Text>,
-        email -> Nullable<Varchar>,
+        email -> Varchar,
         phone -> Nullable<Varchar>,
         sex -> Int4,
         created_at -> Timestamp,
@@ -19,7 +19,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    blog,
-    immortal_user,
-);
+allow_tables_to_appear_in_same_query!(blog, immortal_user,);
