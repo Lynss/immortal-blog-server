@@ -8,6 +8,7 @@ use diesel::{
 use num_cpus;
 
 mod user_info_handler;
+mod login_handler;
 
 pub struct DBExecutor(pub Pool<ConnectionManager<PgConnection>>);
 

@@ -1,11 +1,13 @@
-use actix_web::{error::ResponseError, http::StatusCode, HttpResponse, HttpResponseBuilder};
+use actix_web::{dev::HttpResponseBuilder, error::ResponseError, http::StatusCode, HttpResponse};
 
 #[derive(Fail, Debug)]
 pub enum ImmortalError {
     #[fail(display = "An internal error occurred.")]
     InternalError,
-    #[fail(display = "Unauthorized.", err_msg)]
-    Unauthorized { err_msg: String },
+    #[fail(display = "Unauthorized.{}", err_msg)]
+    Unauthorized { err_msg: &'static str },
+    #[fail(display = "Forbidden.{}", err_msg)]
+    Forbidden { err_msg: &'static str },
 }
 
 impl ResponseError for ImmortalError {
@@ -15,10 +17,13 @@ impl ResponseError for ImmortalError {
                 HttpResponseBuilder::new(StatusCode::INTERNAL_SERVER_ERROR).finish()
             }
             ImmortalError::Unauthorized { err_msg } => {
-                HttpResponseBuilder::new(StatusCode::INTERNAL_SERVER_ERROR)
+                HttpResponseBuilder::new(StatusCode::UNAUTHORIZED)
                     .reason(err_msg)
                     .finish()
             }
+            ImmortalError::Forbidden { err_msg } => HttpResponseBuilder::new(StatusCode::FORBIDDEN)
+                .reason(err_msg)
+                .finish(),
         }
     }
 }

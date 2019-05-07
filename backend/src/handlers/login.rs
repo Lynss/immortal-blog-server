@@ -1,20 +1,21 @@
-use crate::commons::utils;
-use crate::models::{
-    pojos::{LoginRequest, LoginResponse},
-    AppState, HandlerResponse,
-};
 use actix_web::{AsyncResponder, Json, State};
-use commons::{configs::EXPIRE_TIME, Claims, ImmortalError};
-use futures::future;
+use futures::Future;
+
+use commons::{Claims, configs::EXPIRE_TIME, ImmortalError, utils};
+
+use crate::models::{
+    AppState,
+    HandlerResponse, pojos::{LoginRequest, LoginResponse},
+};
 
 pub fn login(
     (info, state): (Json<LoginRequest>, State<AppState>),
 ) -> HandlerResponse<LoginResponse> {
     state
         .db
-        .send(info.into_inner)
-        .map_err(ImmortalError::InternalError)
-        .map(|result| {
+        .send(info.into_inner())
+        .map_err(|_|ImmortalError::InternalError)
+        .and_then(|result| {
             result.map(|user| {
                 //generate token from user
                 let claims = Claims {
@@ -22,6 +23,8 @@ pub fn login(
                     id: user.id,
                     exp: EXPIRE_TIME,
                 };
+                let token = utils::jwt_encode(&claims, None);
+                utils::success(LoginResponse { token })
             })
         })
         .responder()

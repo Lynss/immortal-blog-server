@@ -1,5 +1,8 @@
-use crate::models::domains::ImmortalUser;
+use actix_web::actix::Message;
+
 use commons::Result;
+
+use crate::models::domains::ImmortalUser;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {

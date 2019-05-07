@@ -3,15 +3,15 @@ use chrono::NaiveDateTime;
 
 #[derive(Queryable, Serialize)]
 pub struct ImmortalUser {
-    id: i32,
-    nickname: String,
-    password: String,
-    role: Vec<String>,
-    email: String,
-    phone: Option<String>,
-    sex: i32,
-    created_at: NaiveDateTime,
-    avatar: String,
+    pub id: i32,
+    pub nickname: String,
+    pub password: String,
+    pub role: Vec<String>,
+    pub email: String,
+    pub phone: Option<String>,
+    pub sex: i32,
+    pub created_at: NaiveDateTime,
+    pub avatar: String,
 }
 
 pub struct GetUser {
