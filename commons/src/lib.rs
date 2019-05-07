@@ -4,14 +4,17 @@ extern crate failure;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate jsonwebtoken;
 
 pub use immortal_error::*;
 pub use immortal_response::*;
+pub use claims::*;
 use std::result;
 
 pub mod configs;
 mod immortal_error;
 mod immortal_response;
+mod claims;
 pub mod middlewares;
 pub mod utils;
 

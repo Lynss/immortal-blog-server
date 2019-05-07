@@ -7,7 +7,6 @@ extern crate commons;
 extern crate diesel;
 extern crate dotenv;
 extern crate futures;
-extern crate jsonwebtoken;
 extern crate listenfd;
 #[macro_use]
 extern crate log;

@@ -8,7 +8,7 @@ use crate::models::{
 };
 
 pub fn login(
-    (info, _state): (Json<LoginRequest>, State<AppState>),
+    (info, state): (Json<LoginRequest>, State<AppState>),
 ) -> HandlerResponse<LoginResponse> {
     future::done(utils::success(LoginResponse {
         token: String::from("token"),
