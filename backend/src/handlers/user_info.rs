@@ -20,7 +20,7 @@ pub fn get_users(
         })
         .map_err(|_|ImmortalError::InternalError)
         .and_then(|result| match result {
-            Ok(users) => utils::success(users),
+            Ok(users) => Ok(utils::success(users)),
             Err(_) => utils::fail(Immortal::InternalError("Failed to load users".into())),
         })
         .responder()
