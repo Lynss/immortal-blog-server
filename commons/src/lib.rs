@@ -1,20 +1,24 @@
+extern crate actix_redis;
 extern crate actix_web;
 #[macro_use]
 extern crate failure;
+#[macro_use]
+extern crate redis_async;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate jsonwebtoken;
+extern crate chrono;
 
+pub use claims::*;
 pub use immortal_error::*;
 pub use immortal_response::*;
-pub use claims::*;
 use std::result;
 
+mod claims;
 pub mod configs;
 mod immortal_error;
 mod immortal_response;
-mod claims;
 pub mod middlewares;
 pub mod utils;
 

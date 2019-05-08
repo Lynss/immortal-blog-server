@@ -3,3 +3,7 @@ drop table blog;
 
 drop table immortal_user;
 
+drop table role;
+
+drop function trigger_set_timestamp();
+

@@ -26,10 +26,10 @@ pub fn jwt_decode(token: String, validation: Option<Validation>) -> Result<Claim
     match decode::<Claims>(&token, KEY.as_ref(), &validation) {
         Ok(token_data) => Ok(token_data.claims),
         Err(err) => match *err.kind() {
-            ErrorKind::ExpiredSignature => Err(ImmortalError::Forbidden {
+            ErrorKind::ExpiredSignature => Err(ImmortalError::Unauthorized {
                 err_msg: "Token had expired",
             }),
-            _ => Err(ImmortalError::Forbidden {
+            _ => Err(ImmortalError::Unauthorized {
                 err_msg: "Invalid token",
             }),
         },

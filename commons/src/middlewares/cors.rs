@@ -3,20 +3,13 @@ use actix_web::{
         header::{self, HeaderValue},
         Method, StatusCode,
     },
-    HttpRequest,
-    HttpResponse, middleware::{cors::AllOrSome, Middleware, Response}, Result,
+    middleware::{cors::AllOrSome, Middleware, Response},
+    HttpRequest, HttpResponse, Result,
 };
 
+#[derive(Default)]
 pub struct Cors {
     allowed_origins: AllOrSome<Vec<&'static str>>,
-}
-
-impl Default for Cors {
-    fn default() -> Self {
-        Cors {
-            allowed_origins: AllOrSome::default(),
-        }
-    }
 }
 
 impl Cors {

@@ -1,11 +1,12 @@
 use actix_web::{AsyncResponder, Json, State};
+use chrono::Utc;
 use futures::Future;
 
-use commons::{Claims, configs::EXPIRE_TIME, ImmortalError, utils};
+use commons::{configs::EXPIRE_TIME, utils, Claims, ImmortalError};
 
 use crate::models::{
-    AppState,
-    HandlerResponse, pojos::{LoginRequest, LoginResponse},
+    pojos::{LoginRequest, LoginResponse},
+    AppState, HandlerResponse,
 };
 
 pub fn login(
@@ -14,14 +15,15 @@ pub fn login(
     state
         .db
         .send(info.into_inner())
-        .map_err(|_|ImmortalError::InternalError)
+        .map_err(|_| ImmortalError::InternalError)
         .and_then(|result| {
             result.map(|user| {
+                let expire = Utc::now().timestamp();
                 //generate token from user
                 let claims = Claims {
                     nickname: user.nickname,
                     id: user.id,
-                    exp: EXPIRE_TIME,
+                    exp: expire + EXPIRE_TIME,
                 };
                 let token = utils::jwt_encode(&claims, None);
                 utils::success(LoginResponse { token })
