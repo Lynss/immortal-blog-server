@@ -31,9 +31,6 @@ create index immortal_user_updated_at_index
 insert into immortal_user (id, nickname, password, role, email, phone, sex)
 values (0, 'lynss', 'lynss', '{4}', 'ly1169134156@163.com', '17764189136', 0);
 
-insert into immortal_user (id, nickname, password, email, phone, sex)
-values (1, 'lyanss', 'lynss', 'ly1169134156@163.com', '17764189136', 0);
-
 create table if not exists role
 (
     id         serial primary key,

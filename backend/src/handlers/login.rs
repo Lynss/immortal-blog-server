@@ -2,11 +2,11 @@ use actix_web::{AsyncResponder, Json, State};
 use chrono::Utc;
 use futures::Future;
 
-use commons::{configs::EXPIRE_TIME, utils, Claims, ImmortalError};
+use commons::{AppState, Claims, configs::EXPIRE_TIME, ImmortalError, utils};
 
 use crate::models::{
+    HandlerResponse,
     pojos::{LoginRequest, LoginResponse},
-    AppState, HandlerResponse,
 };
 
 pub fn login(
@@ -15,7 +15,7 @@ pub fn login(
     state
         .db
         .send(info.into_inner())
-        .map_err(|_| ImmortalError::InternalError)
+        .map_err(ImmortalError::ignore)
         .and_then(|result| {
             result.map(|user| {
                 let expire = Utc::now().timestamp();

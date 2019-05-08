@@ -12,7 +12,6 @@ diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2
 dotenv = "0.13.0"
 serde = "1.0.90"
 serde_json = "1.0.39"
-num_cpus = "1.10.0"
 serde_derive = "1.0.90"
 log4rs = { version = "0.8.3", features = ["rolling_file_appender", "compound_policy", "size_trigger", "fixed_window_roller"] }
 log = "0.4.6"

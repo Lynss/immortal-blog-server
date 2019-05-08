@@ -1,9 +1,9 @@
 use actix_web::actix::Handler;
 use diesel::prelude::*;
 
-use commons::{ImmortalError, Result};
+use commons::{DBExecutor, ImmortalError, Result};
 
-use crate::models::{DBExecutor, ImmortalUser, pojos::LoginRequest, schema};
+use crate::models::{ImmortalUser, pojos::LoginRequest, schema};
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<ImmortalUser>;

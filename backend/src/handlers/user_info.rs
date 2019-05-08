@@ -1,9 +1,9 @@
 use actix_web::{AsyncResponder, Query, State};
 use futures::Future;
 
-use commons::{Immortal, ImmortalError, utils};
+use commons::{AppState, Immortal, ImmortalError, utils};
 
-use crate::models::{AppState, GetUser, HandlerResponse, ImmortalUser};
+use crate::models::{GetUser, HandlerResponse, ImmortalUser};
 
 #[derive(Deserialize)]
 pub struct Info {
@@ -18,7 +18,7 @@ pub fn get_users(
         .send(GetUser {
             phone: query.phone.clone(),
         })
-        .map_err(|_|ImmortalError::InternalError)
+        .map_err(ImmortalError::ignore)
         .and_then(|result| match result {
             Ok(users) => Ok(utils::success(users)),
             Err(_) => utils::fail(Immortal::InternalError("Failed to load users".into())),

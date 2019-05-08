@@ -1,7 +1,9 @@
 use actix_web::{actix::Handler, error, Result};
 use diesel::prelude::*;
 
-use crate::models::{DBExecutor, GetUser, ImmortalUser, schema};
+use commons::DBExecutor;
+
+use crate::models::{GetUser, ImmortalUser, schema};
 
 impl Handler<GetUser> for DBExecutor {
     type Result = Result<Vec<ImmortalUser>>;

@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use actix_web::{dev::HttpResponseBuilder, error::ResponseError, http::StatusCode, HttpResponse};
 
 #[derive(Fail, Debug)]
@@ -8,6 +10,12 @@ pub enum ImmortalError {
     Unauthorized { err_msg: &'static str },
     #[fail(display = "Forbidden.{}", err_msg)]
     Forbidden { err_msg: &'static str },
+}
+
+impl ImmortalError {
+    pub fn ignore<T>(any: T) -> Self {
+        ImmortalError::InternalError
+    }
 }
 
 impl ResponseError for ImmortalError {
