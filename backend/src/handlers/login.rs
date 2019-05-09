@@ -2,11 +2,11 @@ use actix_web::{AsyncResponder, Json, State};
 use chrono::Utc;
 use futures::Future;
 
-use commons::{AppState, Claims, configs::EXPIRE_TIME, ImmortalError, utils};
+use commons::{configs::EXPIRE_TIME, utils, AppState, Claims, ImmortalError};
 
 use crate::models::{
-    HandlerResponse,
     pojos::{LoginRequest, LoginResponse},
+    HandlerResponse,
 };
 
 pub fn login(
@@ -21,11 +21,11 @@ pub fn login(
                 let expire = Utc::now().timestamp();
                 //generate token from user
                 let claims = Claims {
-                    nickname: user.nickname,
                     id: user.id,
                     exp: expire + EXPIRE_TIME,
                 };
                 let token = utils::jwt_encode(&claims, None);
+                //get privileges of current user
                 utils::success(LoginResponse { token })
             })
         })

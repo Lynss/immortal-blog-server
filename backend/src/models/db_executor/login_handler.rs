@@ -3,7 +3,7 @@ use diesel::prelude::*;
 
 use commons::{DBExecutor, ImmortalError, Result};
 
-use crate::models::{ImmortalUser, pojos::LoginRequest, schema};
+use crate::models::{pojos::LoginRequest, schema, ImmortalUser};
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<ImmortalUser>;

@@ -27,9 +27,8 @@ create index immortal_user_created_at_index
     on immortal_user (created_at);
 create index immortal_user_updated_at_index
     on immortal_user (updated_at);
-
 insert into immortal_user (id, nickname, password, role, email, phone, sex)
-values (0, 'lynss', 'lynss', '{4}', 'ly1169134156@163.com', '17764189136', 0);
+values (1, 'lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0);
 
 create table if not exists role
 (
@@ -45,11 +44,11 @@ create index role_updated_at_index
     on role (updated_at);
 -- initial roles
 insert into role (id, name)
-values (0, 'untouchable'),
-       (1, 'vaishya'),
-       (2, 'kshatriya'),
-       (3, 'brahmin'),
-       (4, 'immortal');
+values (1, 'untouchable'),
+       (2, 'vaishya'),
+       (3, 'kshatriya'),
+       (4, 'brahmin'),
+       (5, 'immortal');
 
 create table if not exists permission
 (
@@ -69,7 +68,7 @@ create table if not exists role_permission
     id            serial primary key,
     role_id       int       not null,
     permission_id int       not null,
-    level         int       not null default 1,
+    level         int       not null default 2,
     created_at    timestamp not null default current_timestamp,
     updated_at    timestamp not null default current_timestamp
 );
@@ -80,15 +79,15 @@ create index role_permission_created_at_index
     on role_permission (created_at);
 create index role_permission_updated_at_index
     on role_permission (updated_at);
-comment on column role_permission.permission_id is '-1 is considered * means a role has same level on all permissions';
+comment on column role_permission.permission_id is '0 is considered * means a role has same level on all permissions';
 insert into role_permission (role_id, permission_id, level)
-values (0, -1, 0),
-       (1, -1, 1),
-       (2, -1, 2),
-       (3, -1, 3),
-       (4, -1, 4);
+values (1, 0, 1),
+       (2, 0, 2),
+       (3, 0, 3),
+       (4, 0, 4),
+       (5, 0, 5);
 
--- add trigger for all table on update operation
+-- create trigger function
 create or replace function trigger_set_timestamp()
     returns trigger as
 $$
@@ -98,6 +97,7 @@ begin
 end;
 $$ language plpgsql;
 
+-- add trigger for all tables on update operation
 do $$
     declare
         t record;

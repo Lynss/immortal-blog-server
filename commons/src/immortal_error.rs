@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use actix_web::{dev::HttpResponseBuilder, error::ResponseError, http::StatusCode, HttpResponse};
 
 #[derive(Fail, Debug)]
@@ -13,7 +11,7 @@ pub enum ImmortalError {
 }
 
 impl ImmortalError {
-    pub fn ignore<T>(any: T) -> Self {
+    pub fn ignore<T>(_: T) -> Self {
         ImmortalError::InternalError
     }
 }

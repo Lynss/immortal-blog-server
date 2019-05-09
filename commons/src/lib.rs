@@ -6,8 +6,6 @@ extern crate diesel;
 extern crate failure;
 extern crate jsonwebtoken;
 extern crate num_cpus;
-#[macro_use]
-extern crate redis_async;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -21,6 +19,7 @@ pub use db_executor::*;
 pub use immortal_error::*;
 pub use immortal_response::*;
 pub use state::*;
+pub use identity::*;
 
 mod claims;
 pub mod configs;
@@ -29,6 +28,7 @@ mod immortal_error;
 mod immortal_response;
 pub mod middlewares;
 mod state;
+mod identity;
 pub mod utils;
 
 pub enum Immortal {

@@ -11,7 +11,6 @@ serde_derive = "1.0.90"
 failure = "0.1.5"
 jsonwebtoken = "6.0.0"
 actix-redis = "0.5.1"
-redis-async = "0.4.4"
 chrono = "0.4.6"
 num_cpus = "1.10.0"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }

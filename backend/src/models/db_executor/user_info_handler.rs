@@ -3,7 +3,7 @@ use diesel::prelude::*;
 
 use commons::DBExecutor;
 
-use crate::models::{GetUser, ImmortalUser, schema};
+use crate::models::{schema, GetUser, ImmortalUser};
 
 impl Handler<GetUser> for DBExecutor {
     type Result = Result<Vec<ImmortalUser>>;

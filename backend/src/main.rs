@@ -13,6 +13,9 @@ extern crate log;
 extern crate log4rs;
 #[macro_use]
 extern crate serde_derive;
+extern crate actix_redis;
+#[macro_use]
+extern crate redis_async;
 
 use actix_web::server;
 use dotenv::dotenv;
@@ -24,6 +27,7 @@ use commons::configs::BACKEND_LOG_CONFIG;
 mod handlers;
 mod models;
 mod router;
+mod middlewares;
 
 pub trait HotListener {
     fn hot_listen(self) -> Self;

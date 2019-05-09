@@ -1,8 +1,8 @@
-use actix_web::{App, http::Method, middleware::Logger};
+use actix_web::{http::Method, middleware::Logger, App};
 
-use commons::{AppState, DBExecutor, middlewares::Cors, RedisActor};
+use commons::{middlewares::Cors, AppState, DBExecutor, RedisActor};
 
-use crate::handlers;
+use crate::{handlers,middlewares::Auth};
 
 pub fn init_with_state() -> App<AppState> {
     let db_addr = DBExecutor::init();
@@ -14,6 +14,7 @@ pub fn init_with_state() -> App<AppState> {
     })
     .middleware(Logger::default())
     .middleware(Cors::new(origins))
+    .middleware(Auth)
     .scope("/api", |api| {
         api.resource("/privileges", |route| {
             route

@@ -1,7 +1,7 @@
 use actix_web::{AsyncResponder, Query, State};
 use futures::Future;
 
-use commons::{AppState, Immortal, ImmortalError, utils};
+use commons::{utils, AppState, Immortal, ImmortalError};
 
 use crate::models::{GetUser, HandlerResponse, ImmortalUser};
 
