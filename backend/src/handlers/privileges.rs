@@ -1,13 +1,10 @@
 use actix_web::{AsyncResponder, State};
 use futures::future;
 
-use commons::{utils, AppState};
+use commons::{AppState, utils};
 
-use crate::models::{pojos::LoginResponse, HandlerResponse};
+use crate::models::HandlerResponse;
 
-pub fn get_privileges(state: State<AppState>) -> HandlerResponse<LoginResponse> {
-    future::done(Ok(utils::success(LoginResponse {
-        token: String::from("token"),
-    })))
-    .responder()
+pub fn get_privileges(state: State<AppState>) -> HandlerResponse<i32> {
+    future::done(Ok(utils::success(1))).responder()
 }

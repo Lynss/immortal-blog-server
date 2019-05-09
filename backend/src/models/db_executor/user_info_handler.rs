@@ -3,16 +3,16 @@ use diesel::prelude::*;
 
 use commons::DBExecutor;
 
-use crate::models::{schema, GetUser, ImmortalUser};
+use crate::models::{GetUser, ImmortalUser, schema};
 
 impl Handler<GetUser> for DBExecutor {
     type Result = Result<Vec<ImmortalUser>>;
     fn handle(&mut self, get_user: GetUser, _: &mut Self::Context) -> Self::Result {
-        use schema::immortal_user::dsl::*;
+        use schema::immortal_users::dsl::*;
         let query_phone = get_user.phone.unwrap_or_default();
         let pattern = format!("%{}%", query_phone);
         let connection: &PgConnection = &self.0.get().unwrap();
-        immortal_user
+        immortal_users
             .filter(phone.like(pattern))
             .limit(5)
             .load::<ImmortalUser>(connection)

@@ -1,12 +1,14 @@
 use actix_web::{actix::Message, Result};
 use chrono::NaiveDateTime;
 
-#[derive(Queryable, Serialize)]
+use crate::models::schema::immortal_users;
+
+#[derive(Queryable, Serialize, Identifiable)]
 pub struct ImmortalUser {
     pub id: i32,
     pub nickname: String,
     pub password: String,
-    pub role: Vec<i32>,
+    pub roles: Vec<i32>,
     pub email: String,
     pub phone: Option<String>,
     pub sex: i32,

@@ -2,11 +2,11 @@ use actix_web::{AsyncResponder, Json, State};
 use chrono::Utc;
 use futures::Future;
 
-use commons::{configs::EXPIRE_TIME, utils, AppState, Claims, ImmortalError};
+use commons::{AppState, Claims, configs::EXPIRE_TIME, ImmortalError, utils};
 
 use crate::models::{
-    pojos::{LoginRequest, LoginResponse},
     HandlerResponse,
+    pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges},
 };
 
 pub fn login(
@@ -17,17 +17,25 @@ pub fn login(
         .send(info.into_inner())
         .map_err(ImmortalError::ignore)
         .and_then(|result| {
-            result.map(|user| {
-                let expire = Utc::now().timestamp();
-                //generate token from user
-                let claims = Claims {
-                    id: user.id,
-                    exp: expire + EXPIRE_TIME,
-                };
-                let token = utils::jwt_encode(&claims, None);
-                //get privileges of current user
-                utils::success(LoginResponse { token })
-            })
+            result.map(
+                |AuthInfo {
+                     id,
+                     roles,
+                     permissions,
+                 }| {
+                    debug!("{},{:?},{:?}",&id, &roles, &permissions);
+                    let expire = Utc::now().timestamp();
+                    //generate token from user
+                    let claims = Claims {
+                        id,
+                        exp: expire + EXPIRE_TIME,
+                    };
+                    let token = utils::jwt_encode(&claims, None);
+                    //get privileges of current user
+                    let privileges = Privileges { roles, permissions };
+                    utils::success(LoginResponse { token, privileges })
+                },
+            )
         })
         .responder()
 }

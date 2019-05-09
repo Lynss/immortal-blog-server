@@ -22,6 +22,6 @@ impl DBExecutor {
             .max_size(10)
             .build(manager)
             .expect("Failed to create pool.");
-        SyncArbiter::start(num_cpus::get() * 4, move || DBExecutor(conn.clone()))
+        SyncArbiter::start(num_cpus::get(), move || DBExecutor(conn.clone()))
     }
 }

@@ -1,9 +1,10 @@
+use std::collections::HashMap;
+
 use actix_web::actix::Message;
+use diesel::sql_types::{Array, Integer, Json as SqlJson, Record, SqlOrd, VarChar};
+use serde_json::Value as Json;
 
 use commons::Result;
-
-use crate::models::domains::ImmortalUser;
-use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -13,18 +14,27 @@ pub struct LoginRequest {
 }
 
 impl Message for LoginRequest {
-    type Result = Result<ImmortalUser>;
+    type Result = Result<AuthInfo>;
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct Privileges {
+    pub roles: Vec<String>,
+    pub permissions: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct LoginResponse {
     pub token: String,
+    pub privileges: Privileges,
 }
 
-pub struct GetPrivileges {
-    pub user_id: i32,
-}
-
-impl Message for GetPrivileges {
-    type Result = Result<HashMap<String, i32>>;
+#[derive(Queryable, QueryableByName,Deserialize, Serialize,Debug)]
+pub struct AuthInfo {
+    #[sql_type = "Integer"]
+    pub id: i32,
+    #[sql_type = "Array<VarChar>"]
+    pub roles: Vec<String>,
+    #[sql_type = "Array<VarChar>"]
+    pub permissions: Vec<String>,
 }

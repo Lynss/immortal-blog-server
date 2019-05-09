@@ -1,5 +1,5 @@
-#![feature(async_await, futures_api, await_macro)]
-
+#![feature(async_await,custom_attribute, futures_api, await_macro)]
+extern crate actix_redis;
 extern crate actix_web;
 extern crate chrono;
 extern crate commons;
@@ -12,10 +12,9 @@ extern crate listenfd;
 extern crate log;
 extern crate log4rs;
 #[macro_use]
-extern crate serde_derive;
-extern crate actix_redis;
-#[macro_use]
 extern crate redis_async;
+#[macro_use]
+extern crate serde_derive;
 
 use actix_web::server;
 use dotenv::dotenv;

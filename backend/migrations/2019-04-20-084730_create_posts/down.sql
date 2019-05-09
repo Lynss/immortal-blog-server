@@ -1,13 +1,13 @@
 -- This file should undo anything in `up.sql`
-drop table blog;
+drop table blogs;
 
-drop table immortal_user;
+drop table immortal_users;
 
-drop table role;
+drop table roles;
 
-drop table permission;
+drop table permissions;
 
-drop table role_permission;
+drop table role_permissions;
 
 drop function trigger_set_timestamp();
 
