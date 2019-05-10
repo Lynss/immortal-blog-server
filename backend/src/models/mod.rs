@@ -1,10 +1,8 @@
 use actix_web::{FutureResponse, Json};
 
 use commons::{ImmortalError, ImmortalResponse};
-pub use db_executor::*;
 pub use domains::*;
 
-mod db_executor;
 mod domains;
 
 pub mod pojos;

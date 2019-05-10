@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
 use actix_web::actix::Message;
-use diesel::sql_types::{Array, Integer, Json as SqlJson, Record, SqlOrd, VarChar};
-use serde_json::Value as Json;
+use diesel::sql_types::{Array,Integer, Record, VarChar};
 
 use commons::Result;
 
@@ -20,7 +17,7 @@ impl Message for LoginRequest {
 #[derive(Deserialize, Serialize)]
 pub struct Privileges {
     pub roles: Vec<String>,
-    pub permissions: Vec<String>,
+    pub permissions: Vec<(String,i32)>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -35,6 +32,6 @@ pub struct AuthInfo {
     pub id: i32,
     #[sql_type = "Array<VarChar>"]
     pub roles: Vec<String>,
-    #[sql_type = "Array<VarChar>"]
-    pub permissions: Vec<String>,
+    #[sql_type = "Array<Record<(VarChar,Integer)>>"]
+    pub permissions: Vec<(String,i32)>,
 }

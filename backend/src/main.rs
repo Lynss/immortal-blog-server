@@ -27,6 +27,7 @@ mod handlers;
 mod models;
 mod router;
 mod middlewares;
+mod db_executor;
 
 pub trait HotListener {
     fn hot_listen(self) -> Self;

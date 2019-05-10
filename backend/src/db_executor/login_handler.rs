@@ -1,18 +1,15 @@
 use actix_web::actix::Handler;
 use diesel::{debug_query, pg::Pg, prelude::*, sql_query, sql_types::VarChar};
-use diesel::query_dsl::load_dsl::LoadQuery;
 
 use commons::{DBExecutor, ImmortalError, Result};
 
 use crate::models::{
     pojos::{AuthInfo, LoginRequest},
-    schema,
 };
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<AuthInfo>;
     fn handle(&mut self, login_request: LoginRequest, _: &mut Self::Context) -> Self::Result {
-        use schema::immortal_users::dsl::*;
         let connection: &PgConnection = &self.0.get().unwrap();
         let LoginRequest {
             nickname: ref nick,
