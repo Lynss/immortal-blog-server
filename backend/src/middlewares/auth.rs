@@ -6,10 +6,13 @@ use actix_web::{
     middleware::{Middleware, Response, Started},
     AsyncResponder, HttpRequest, HttpResponse, Result,
 };
-use futures::Future;
+use futures::{future::join_all, Future};
 use redis_async::resp::FromResp;
 
-use commons::{utils, AppState, Identity, ImmortalError};
+use commons::{
+    configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
+    utils, AppState, Identity, ImmortalError,
+};
 
 pub struct Auth;
 
@@ -29,7 +32,7 @@ impl Middleware<AppState> for Auth {
                         err_msg: "You may haven't logged in ",
                     }
                     .error_response(),
-                ))
+                ));
             }
         };
         let claims = match utils::jwt_decode(token, None) {
@@ -37,22 +40,29 @@ impl Middleware<AppState> for Auth {
             Err(err) => return Ok(Started::Response(err.error_response())),
         };
         //get privileges through using claims
-        let key = utils::create_privileges_key(claims.id);
+        let permissions_key = utils::create_prefix_key(PERMISSIONS_PREFIX_KEY, claims.id);
+        let roles_key = utils::create_prefix_key(ROLES_PREFIX_KEY, claims.id);
+        let get_permissions = req
+            .state()
+            .redis
+            .send(Command(resp_array!["HGETALL", permissions_key]));
+        let get_roles = req
+            .state()
+            .redis
+            .send(Command(resp_array!["LRANGE", roles_key, "0", "-1"]));
         Ok(Started::Future(
-            req.state()
-                .redis
-                .send(Command(resp_array!["LRANGE", key, "0", "-1"]))
+            join_all(vec![get_permissions, get_roles])
                 .from_err()
-                .map(move |res| match res {
-                    Ok(RespValue::Nil) => None,
-                    Ok(privilege_array @ RespValue::Array(_)) => {
-                        req.extensions_mut().insert(Identity(Box::new(
-                            HashMap::<String, i32>::from_resp(privilege_array).unwrap(),
-                        )));
+                .map(move |res|
+                    if let [Ok(permissions @ RespValue::Array(_)), Ok(roles @ RespValue::Array(_))] = res.as_slice() {
+                        req.extensions_mut().insert(Identity {
+                            permissions: HashMap::<String, i32>::from_resp(permissions.clone()).unwrap(),
+                            roles: Vec::<String>::from_resp(roles.clone()).unwrap(),
+                        });
                         None
-                    }
-                    _ => Some(ImmortalError::InternalError.error_response()),
-                })
+                    } else {
+                        Some(ImmortalError::InternalError.error_response())
+                    })
                 .responder(),
         ))
     }

@@ -1,5 +1,4 @@
 use actix_web::{http::Method, middleware::Logger, App};
-
 use commons::{middlewares::Cors, AppState, DBExecutor, RedisActor};
 
 use crate::{handlers,middlewares::Auth};

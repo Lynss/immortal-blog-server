@@ -1,4 +1,4 @@
-#![feature(async_await,custom_attribute, futures_api, await_macro)]
+#![feature(async_await,custom_attribute, await_macro)]
 extern crate actix_redis;
 extern crate actix_web;
 extern crate chrono;

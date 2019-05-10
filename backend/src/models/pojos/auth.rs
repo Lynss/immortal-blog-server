@@ -1,7 +1,8 @@
 use actix_web::actix::Message;
-use diesel::sql_types::{Array,Integer, Record, VarChar};
+use diesel::sql_types::{Array, Integer, Record, VarChar};
 
 use commons::Result;
+use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -17,7 +18,7 @@ impl Message for LoginRequest {
 #[derive(Deserialize, Serialize)]
 pub struct Privileges {
     pub roles: Vec<String>,
-    pub permissions: Vec<(String,i32)>,
+    pub permissions: HashMap<String, i32>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -26,12 +27,12 @@ pub struct LoginResponse {
     pub privileges: Privileges,
 }
 
-#[derive(Queryable, QueryableByName,Deserialize, Serialize,Debug)]
+#[derive(Queryable, QueryableByName, Deserialize, Serialize, Debug)]
 pub struct AuthInfo {
     #[sql_type = "Integer"]
     pub id: i32,
     #[sql_type = "Array<VarChar>"]
     pub roles: Vec<String>,
     #[sql_type = "Array<Record<(VarChar,Integer)>>"]
-    pub permissions: Vec<(String,i32)>,
+    pub permissions: Vec<(String, i32)>,
 }

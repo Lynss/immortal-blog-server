@@ -2,7 +2,6 @@ use actix_web::Json;
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;
 
-use crate::configs::PRIVILEGES_PREFIX_KEY;
 use crate::{Claims, Immortal, ImmortalError, ImmortalResponse, Result};
 
 pub fn success<T: Serialize>(data: T) -> Json<ImmortalResponse<T>> {
@@ -37,6 +36,6 @@ pub fn jwt_decode(token: String, validation: Option<Validation>) -> Result<Claim
     }
 }
 
-pub fn create_privileges_key(info: i32) -> String {
-    format!("{}_{}", &PRIVILEGES_PREFIX_KEY, info)
+pub fn create_prefix_key(prefix: &str, info: i32) -> String {
+      format!("{}:{}", prefix, info)
 }
