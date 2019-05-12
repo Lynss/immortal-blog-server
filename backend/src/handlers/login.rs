@@ -6,53 +6,49 @@ use actix_web::{actix::Addr, AsyncResponder, Json, State};
 use chrono::Utc;
 use futures::{
     future::{self, join_all},
-    Future,
+    Future, IntoFuture,
 };
 
 use commons::{
-    configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
-    utils, AppState, Claims, ImmortalError,
+    AppState,
+    Claims, configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, ImmortalError, utils,
 };
 
 use crate::models::{
-    pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges},
     HandlerResponse,
+    pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges},
 };
 
 fn store_privileges(
     redis: Addr<RedisActor>,
-    roles: Vec<String>,
-    permissions: Vec<(String, i32)>,
+    roles: &Vec<String>,
+    permissions: &Vec<(String, i32)>,
     id: i32,
 ) -> impl Future<Item = (), Error = ImmortalError> {
     //create task to save permissions
-    let save_permissions_command: String = permissions
+    let mut save_permissions_command = permissions
         .iter()
         .map(|(key, value)| vec![key.clone(), value.to_string()])
         .flatten()
-        .collect::<Vec<String>>()
-        .join(" ");
+        .collect::<Vec<String>>();
     let permissions_key = utils::create_prefix_key(PERMISSIONS_PREFIX_KEY, id);
-    let save_permissions = redis.send(Command(resp_array![
-        "HSET",
-        permissions_key,
-        save_permissions_command
-    ]));
-
-    //create task to save roles
-    let save_roles_command = roles.join(" ");
+    let save_permissions = redis.send(Command(
+        resp_array!["HSET", permissions_key].append(&mut save_permissions_command),
+    ));
     let roles_key = &utils::create_prefix_key(ROLES_PREFIX_KEY, id)[..];
-    let save_roles = redis.send(Command(resp_array!["LPUSH", roles_key, save_roles_command]));
+    let save_roles = redis.send(Command(
+        resp_array!["SADD", roles_key].append(&mut roles.clone()),
+    ));
     //begin action
     join_all(vec![save_permissions, save_roles])
         .map_err(ImmortalError::ignore)
         .and_then(move |res| match res.as_slice() {
-            [Ok(RespValue::SimpleString(x)), Ok(RespValue::SimpleString(y))]
-                if x == "OK" && y == "OK" =>
+            [Ok(RespValue::Integer(x)), Ok(RespValue::Integer(y))]
+                if x.clone() >= 0 && y.clone() >= 0 =>
             {
-                Ok(())
+                future::ok(())
             }
-            _ => Err(ImmortalError::ignore(
+            _ => future::err(ImmortalError::ignore(
                 "Failed to store privileges into redis",
             )),
         })
@@ -66,30 +62,32 @@ pub fn login(
     db.send(info.into_inner())
         .map_err(ImmortalError::ignore)
         .and_then(move |result| {
-            match result {
-                Ok(AuthInfo {
-                    id,
-                    roles,
-                    permissions,
-                }) => {
-                    let expire = Utc::now().timestamp();
-                    //generate token from user
-                    let claims = Claims {
-                        id,
-                        exp: expire + EXPIRE_TIME,
-                    };
-                    let token = utils::jwt_encode(&claims, None);
-                    store_privileges(redis, roles, permissions, id).and_then(|_| {
-                        //transform vec to map structure
-                        let permissions = HashMap::from_iter(permissions);
-                        //get privileges of current user
-                        let privileges = Privileges { roles, permissions };
+            result
+                .map(
+                    |AuthInfo {
+                         id,
+                         roles,
+                         permissions,
+                     }| {
+                        let expire = Utc::now().timestamp();
+                        //generate token from user
+                        let claims = Claims {
+                            id,
+                            exp: expire + EXPIRE_TIME,
+                        };
+                        let token = utils::jwt_encode(&claims, None);
                         //save privileges into redis
-                        future::ok(utils::success(LoginResponse { token, privileges }))
-                    })
-                },
-                Err(err) => future::err(err),
-            }
+                        store_privileges(redis, &roles, &permissions, id).and_then(|_| {
+                            //transform vec to map structure
+                            let permissions = HashMap::from_iter(permissions);
+                            //get privileges of current user
+                            let privileges = Privileges { roles, permissions };
+                            Ok(utils::success(LoginResponse { token, privileges }))
+                        })
+                    },
+                )
+                .into_future()
+                .flatten()
         })
         .responder()
 }
