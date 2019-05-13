@@ -12,7 +12,7 @@ create table if not exists immortal_users
     id         serial primary key,
     nickname   varchar   not null,
     password   varchar   not null,
-    roles       int[]     not null default array [1],
+    roles       int[]     not null default array [2],
     email      varchar   not null,
     phone      varchar,
     sex        int       not null default 2,
