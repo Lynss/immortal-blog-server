@@ -15,4 +15,5 @@ chrono = "0.4.6"
 num_cpus = "1.10.0"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }
 log = "0.4.6"
+dotenv = "0.13.0"
 

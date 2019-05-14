@@ -23,8 +23,8 @@ pub fn init_with_state() -> App<AppState> {
         .resource("/login", |route| {
             route.method(Method::POST).with_async(handlers::login)
         })
-        .resource("/user", |route| {
-            route.method(Method::GET).with_async(handlers::get_users)
+        .resource("/register", |route| {
+            route.method(Method::POST).with_async(handlers::register)
         })
     })
 }

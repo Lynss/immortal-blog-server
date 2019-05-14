@@ -1,11 +1,9 @@
 use actix_web::actix::Handler;
-use diesel::{debug_query, pg::Pg, prelude::*, sql_query, sql_types::VarChar};
+use diesel::{prelude::*, sql_query, sql_types::VarChar};
 
-use commons::{DBExecutor, ImmortalError, Result};
+use commons::{utils, DBExecutor, ImmortalError, Result};
 
-use crate::models::{
-    pojos::{AuthInfo, LoginRequest},
-};
+use crate::pojos::{AuthInfo, LoginRequest};
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<AuthInfo>;
@@ -26,14 +24,13 @@ where nickname = $1
   and password = $2
 group by u.id limit 1";
         let query = sql_query(query);
-        let debug = debug_query::<Pg, _>(&query);
-        info!("ready execute query : {:?}", &debug);
+        utils::log_sql(&query);
         query
             .bind::<VarChar, _>(nick)
             .bind::<VarChar, _>(psd)
             .get_result::<AuthInfo>(connection)
             .map_err(|err| {
-                error!("failed to query the auth info {}",err);
+                error!("Failed to query the auth info,caused by {}", err);
                 ImmortalError::Unauthorized {
                     err_msg: "Invalid nickname or password",
                 }

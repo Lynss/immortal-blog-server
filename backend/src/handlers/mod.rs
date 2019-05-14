@@ -1,7 +1,7 @@
 pub use login::*;
 pub use privileges::*;
-pub use user_info::*;
+pub use register::*;
 
 mod login;
 mod privileges;
-mod user_info;
+mod register;

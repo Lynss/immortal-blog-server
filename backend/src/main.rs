@@ -5,7 +5,6 @@ extern crate chrono;
 extern crate commons;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
 extern crate futures;
 extern crate listenfd;
 #[macro_use]
@@ -17,17 +16,16 @@ extern crate redis_async;
 extern crate serde_derive;
 
 use actix_web::server;
-use dotenv::dotenv;
 use listenfd::ListenFd;
 use server::{HttpServer, IntoHttpHandler};
 
-use commons::configs::BACKEND_LOG_CONFIG;
+use commons::{configs::BACKEND_LOG_CONFIG,utils};
 
 mod handlers;
-mod models;
+mod pojos;
 mod router;
 mod middlewares;
-mod db_executor;
+mod db_executors;
 
 pub trait HotListener {
     fn hot_listen(self) -> Self;
@@ -49,7 +47,7 @@ where
 }
 
 fn main() {
-    dotenv().ok();
+    utils::ready_env();
     log4rs::init_file(BACKEND_LOG_CONFIG, Default::default()).unwrap();
     info!("Server started on http://localhost:8083");
     server::new(router::init_with_state).hot_listen().run();

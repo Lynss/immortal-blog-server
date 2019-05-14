@@ -1,15 +1,17 @@
 use actix_web::Json;
+use diesel::query_builder::QueryFragment;
+use diesel::{debug_query, pg::Pg};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;
 
-use crate::{Claims, Immortal, ImmortalError, ImmortalResponse, Result};
+use crate::{dotenv, Claims, ImmortalError, ImmortalResponse, Result};
 
 pub fn success<T: Serialize>(data: T) -> Json<ImmortalResponse<T>> {
-    Json(ImmortalResponse::success(data))
-}
-
-pub fn fail<T: Serialize>(err: Immortal) -> Result<Json<ImmortalResponse<T>>> {
-    Ok(Json(ImmortalResponse::fail(err)))
+    Json(ImmortalResponse {
+        code: 200,
+        data,
+        message: "".to_owned(),
+    })
 }
 
 const KEY: &'static str = "secret";
@@ -37,5 +39,14 @@ pub fn jwt_decode(token: String, validation: Option<Validation>) -> Result<Claim
 }
 
 pub fn create_prefix_key(prefix: &str, info: i32) -> String {
-      format!("{}:{}", prefix, info)
+    format!("{}:{}", prefix, info)
+}
+
+pub fn log_sql<T: QueryFragment<Pg>>(query: &T) {
+    let debug = debug_query::<Pg, _>(&query);
+    info!("execute query : {:?}", &debug);
+}
+
+pub fn ready_env() {
+    dotenv().ok();
 }

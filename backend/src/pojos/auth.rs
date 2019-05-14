@@ -2,6 +2,7 @@ use actix_web::actix::Message;
 use diesel::sql_types::{Array, Integer, Record, VarChar};
 
 use commons::Result;
+
 use std::collections::HashMap;
 
 #[derive(Deserialize)]
@@ -35,4 +36,17 @@ pub struct AuthInfo {
     pub roles: Vec<String>,
     #[sql_type = "Array<Record<(VarChar,Integer)>>"]
     pub permissions: Vec<(String, i32)>,
+}
+
+#[derive(Deserialize, Insertable)]
+#[table_name = "immortal_users"]
+pub struct RegisterRequest {
+    pub nickname: String,
+    pub password: String,
+    pub email: String,
+    pub sex: i32,
+}
+
+impl Message for RegisterRequest {
+    type Result = Result<()>;
 }

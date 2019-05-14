@@ -10,12 +10,12 @@ use futures::{
 };
 
 use commons::{
+    HandlerResponse,
     AppState,
     Claims, configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, ImmortalError, utils,
 };
 
-use crate::models::{
-    HandlerResponse,
+use crate::{
     pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges},
 };
 
