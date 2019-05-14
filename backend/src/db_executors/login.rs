@@ -1,7 +1,7 @@
 use actix_web::actix::Handler;
 use diesel::{prelude::*, sql_query, sql_types::VarChar};
 
-use commons::{utils, DBExecutor, ImmortalError, Result};
+use commons::{DBExecutor, ImmortalError, Result, utils};
 
 use crate::pojos::{AuthInfo, LoginRequest};
 
@@ -23,17 +23,15 @@ from immortal_users u
 where nickname = $1
   and password = $2
 group by u.id limit 1";
-        let query = sql_query(query);
-        utils::log_sql(&query);
-        query
+        let query = sql_query(query)
             .bind::<VarChar, _>(nick)
-            .bind::<VarChar, _>(psd)
-            .get_result::<AuthInfo>(connection)
-            .map_err(|err| {
-                error!("Failed to query the auth info,caused by {}", err);
-                ImmortalError::Unauthorized {
-                    err_msg: "Invalid nickname or password",
-                }
-            })
+            .bind::<VarChar, _>(psd);
+        utils::log_sql(&query);
+        query.get_result::<AuthInfo>(connection).map_err(|err| {
+            error!("Failed to query the auth info,caused by {}", err);
+            ImmortalError::Unauthorized {
+                err_msg: "Invalid nickname or password",
+            }
+        })
     }
 }

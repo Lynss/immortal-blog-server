@@ -1,7 +1,7 @@
 use actix_web::{actix::Message, Result};
 use chrono::NaiveDateTime;
 
-use super::schema::immortal_users;
+use crate::schema::immortal_users;
 
 #[derive(Queryable, Serialize, Identifiable)]
 pub struct ImmortalUser {

@@ -1,8 +1,7 @@
 use actix_web::actix::Message;
 use diesel::sql_types::{Array, Integer, Record, VarChar};
 
-use commons::Result;
-
+use commons::{Result, schema::immortal_users};
 use std::collections::HashMap;
 
 #[derive(Deserialize)]

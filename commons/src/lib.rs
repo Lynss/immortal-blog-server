@@ -14,8 +14,6 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-use std::result;
-
 pub use actix_redis::RedisActor;
 use actix_web::{FutureResponse, Json};
 pub use dotenv::dotenv;
@@ -27,6 +25,7 @@ pub use identity::*;
 pub use immortal_error::*;
 pub use immortal_response::*;
 pub use state::*;
+use std::result;
 
 mod claims;
 pub mod configs;
@@ -38,6 +37,7 @@ mod immortal_response;
 pub mod middlewares;
 mod state;
 pub mod utils;
+pub mod schema;
 
 pub type Result<T, E = ImmortalError> = result::Result<T, E>;
 

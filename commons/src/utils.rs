@@ -1,10 +1,10 @@
 use actix_web::Json;
-use diesel::query_builder::QueryFragment;
 use diesel::{debug_query, pg::Pg};
+use diesel::query_builder::QueryFragment;
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;
 
-use crate::{dotenv, Claims, ImmortalError, ImmortalResponse, Result};
+use crate::{Claims, dotenv, ImmortalError, ImmortalResponse, Result};
 
 pub fn success<T: Serialize>(data: T) -> Json<ImmortalResponse<T>> {
     Json(ImmortalResponse {
@@ -44,7 +44,7 @@ pub fn create_prefix_key(prefix: &str, info: i32) -> String {
 
 pub fn log_sql<T: QueryFragment<Pg>>(query: &T) {
     let debug = debug_query::<Pg, _>(&query);
-    info!("execute query : {:?}", &debug);
+    info!("execute query : {}", &debug);
 }
 
 pub fn ready_env() {

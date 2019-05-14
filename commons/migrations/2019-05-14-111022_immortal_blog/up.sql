@@ -12,7 +12,7 @@ create table if not exists immortal_users
     id         serial primary key,
     nickname   varchar   not null,
     password   varchar   not null,
-    roles       int[]     not null default array [2],
+    roles      int[]     not null default array [2],
     email      varchar   not null,
     phone      varchar,
     sex        int       not null default 2,
@@ -29,14 +29,14 @@ create index immortal_user_created_at_index
     on immortal_users (created_at);
 create index immortal_user_updated_at_index
     on immortal_users (updated_at);
-insert into immortal_users (id, nickname, password, roles, email, phone, sex)
-values (1, 'lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0);
+insert into immortal_users (nickname, password, roles, email, phone, sex)
+values ('lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0);
 
 create table if not exists roles
 (
     id         serial primary key,
     name       varchar   not null,
-    status     int not null default 1,
+    status     int       not null default 1,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
@@ -49,18 +49,18 @@ create index role_status_index on roles (status);
 comment on column roles.status is '0 for disabled,1 for enabled';
 
 -- initial roles
-insert into roles (id, name)
-values (1, 'untouchable'),
-       (2, 'vaishya'),
-       (3, 'kshatriya'),
-       (4, 'brahmin'),
-       (5, 'immortal');
+insert into roles (name)
+values ('untouchable'),
+       ('vaishya'),
+       ('kshatriya'),
+       ('brahmin'),
+       ('immortal');
 
 create table if not exists permissions
 (
     id         serial primary key,
     name       varchar   not null,
-    status     int not null default 1,
+    status     int       not null default 1,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
@@ -71,8 +71,8 @@ create index permission_updated_at_index
     on permissions (updated_at);
 create index permission_status_index
     on permissions (status);
-insert into permissions (id, name)
-values (0, 'all');
+insert into permissions (name)
+values ('all');
 comment on column permissions.status is '0 for disabled,1 for enabled';
 
 
@@ -94,11 +94,11 @@ create index role_permission_updated_at_index
     on role_permissions (updated_at);
 comment on column role_permissions.permission_id is '0 is considered * means a role has same level on all permissions';
 insert into role_permissions (role_id, permission_id, level)
-values (1, 0, 1),
-       (2, 0, 2),
-       (3, 0, 3),
-       (4, 0, 4),
-       (5, 0, 5);
+values (1, 1, 1),
+       (2, 1, 2),
+       (3, 1, 3),
+       (4, 1, 4),
+       (5, 1, 5);
 
 -- create trigger function
 create or replace function trigger_set_timestamp()

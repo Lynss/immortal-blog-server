@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use actix_redis::{Command, RespValue};
 use actix_web::{
     AsyncResponder,
@@ -13,6 +11,7 @@ use commons::{
     AppState,
     configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, Identity, ImmortalError, utils,
 };
+use std::collections::HashMap;
 
 pub struct Auth;
 
@@ -21,7 +20,7 @@ impl Middleware<AppState> for Auth {
         let req = req.clone();
         let req_path = req.path();
         //some paths have no need to check auth
-        if req_path == "/api/login" {
+        if let "/api/login" | "/api/register" = req_path {
             return Ok(Started::Done);
         }
         let token = match req.headers().get("Authorization") {

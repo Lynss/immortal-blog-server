@@ -53,4 +53,10 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(blogs, immortal_users, permissions, role_permissions, roles,);
+allow_tables_to_appear_in_same_query!(
+    blogs,
+    immortal_users,
+    permissions,
+    role_permissions,
+    roles,
+);
