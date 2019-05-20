@@ -1,9 +1,7 @@
 use actix_web::actix::Handler;
 use diesel::{prelude::*, sql_query, sql_types::VarChar};
 
-use commons::{DBExecutor, ImmortalError, Result, utils};
-
-use crate::pojos::{AuthInfo, LoginRequest};
+use commons::{utils, AuthInfo, DBExecutor, ImmortalError, LoginRequest, Result};
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<AuthInfo>;
@@ -14,7 +12,16 @@ impl Handler<LoginRequest> for DBExecutor {
             password: ref psd,
             remember: _,
         } = login_request;
-        let query = r"select u.id, array_agg(r.name) as roles, array_agg(row (p.name,rp.level)) as permissions
+        let query = r"select u.id,
+       u.nickname,
+       u.avatar,
+       u.phone,
+       u.created_at,
+       u.updated_at,
+       u.sex,
+       u.email,
+       array_agg(r.name)                as roles,
+       array_agg(row (p.name,rp.level)) as permissions
 from immortal_users u
          left join roles r on r.id = any (u.roles) and r.status = 1
          left join role_permissions rp
@@ -22,7 +29,9 @@ from immortal_users u
          left join permissions p on rp.permission_id = p.id
 where nickname = $1
   and password = $2
-group by u.id limit 1";
+group by u.id
+limit 1;
+";
         let query = sql_query(query)
             .bind::<VarChar, _>(nick)
             .bind::<VarChar, _>(psd);

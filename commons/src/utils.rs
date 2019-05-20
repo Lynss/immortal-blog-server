@@ -44,7 +44,7 @@ pub fn create_prefix_key(prefix: &str, info: i32) -> String {
 
 pub fn log_sql<T: QueryFragment<Pg>>(query: &T) {
     let debug = debug_query::<Pg, _>(&query);
-    info!("execute query : {}", &debug);
+    info!("Execute sql : {}", &debug);
 }
 
 pub fn ready_env() {

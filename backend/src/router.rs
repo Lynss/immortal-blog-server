@@ -1,7 +1,7 @@
 use actix_web::{http::Method, middleware::Logger, App};
 use commons::{middlewares::Cors, AppState, DBExecutor, RedisActor};
 
-use crate::{handlers,middlewares::Auth};
+use crate::{handlers, middlewares::Auth};
 
 pub fn init_with_state() -> App<AppState> {
     let db_addr = DBExecutor::init();
@@ -18,13 +18,17 @@ pub fn init_with_state() -> App<AppState> {
         api.resource("/privileges", |route| {
             route
                 .method(Method::GET)
-                .with_async(handlers::get_privileges)
+                .with_async(handlers::get_privileges);
+        })
+        .resource("/tags", |route| {
+            route.method(Method::POST).with_async(handlers::create_tag);
+            route.method(Method::GET).with_async(handlers::get_tags);
         })
         .resource("/login", |route| {
-            route.method(Method::POST).with_async(handlers::login)
+            route.method(Method::POST).with_async(handlers::login);
         })
         .resource("/register", |route| {
-            route.method(Method::POST).with_async(handlers::register)
+            route.method(Method::POST).with_async(handlers::register);
         })
     })
 }

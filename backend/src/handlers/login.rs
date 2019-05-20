@@ -4,19 +4,12 @@ use std::iter::FromIterator;
 use actix_redis::{Command, RedisActor, RespValue};
 use actix_web::{actix::Addr, AsyncResponder, Json, State};
 use chrono::Utc;
-use futures::{
-    future::{self, join_all},
-    Future, IntoFuture,
-};
+use futures::{future::join_all, Future, IntoFuture};
 
 use commons::{
-    HandlerResponse,
-    AppState,
-    Claims, configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, ImmortalError, utils,
-};
-
-use crate::{
-    pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges},
+    configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
+    utils, AppState, AuthInfo, Claims, HandlerResponse, ImmortalError, LoginRequest, LoginResponse,
+    Privileges,
 };
 
 fn store_privileges(
@@ -46,9 +39,9 @@ fn store_privileges(
             [Ok(RespValue::Integer(x)), Ok(RespValue::Integer(y))]
                 if x.clone() >= 0 && y.clone() >= 0 =>
             {
-                future::ok(())
+                Ok(())
             }
-            _ => future::err(ImmortalError::ignore(
+            _ => Err(ImmortalError::ignore(
                 "Failed to store privileges into redis",
             )),
         })
@@ -66,6 +59,13 @@ pub fn login(
                 .map(
                     |AuthInfo {
                          id,
+                         email,
+                         nickname,
+                         phone,
+                         avatar,
+                         created_at,
+                         updated_at,
+                         sex,
                          roles,
                          permissions,
                      }| {

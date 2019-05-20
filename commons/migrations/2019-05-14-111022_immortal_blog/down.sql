@@ -9,5 +9,7 @@ drop table permissions;
 
 drop table role_permissions;
 
+drop table tags;
+
 drop function trigger_set_timestamp();
 

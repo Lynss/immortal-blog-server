@@ -1,15 +1,15 @@
 use actix_redis::{Command, RespValue};
 use actix_web::{
-    AsyncResponder,
     error::ResponseError,
-    HttpRequest, HttpResponse, middleware::{Middleware, Response, Started}, Result,
+    middleware::{Middleware, Response, Started},
+    AsyncResponder, HttpRequest, HttpResponse, Result,
 };
-use futures::{Future, future::join_all};
+use futures::{future::join_all, Future};
 use redis_async::resp::FromResp;
 
 use commons::{
-    AppState,
-    configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, Identity, ImmortalError, utils,
+    configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
+    utils, AppState, ImmortalError, Privileges,
 };
 use std::collections::HashMap;
 
@@ -18,6 +18,7 @@ pub struct Auth;
 impl Middleware<AppState> for Auth {
     fn start(&self, req: &HttpRequest<AppState>) -> Result<Started> {
         let req = req.clone();
+        let redis = req.state().redis;
         let req_path = req.path();
         //some paths have no need to check auth
         if let "/api/login" | "/api/register" = req_path {
@@ -40,15 +41,9 @@ impl Middleware<AppState> for Auth {
         };
         //get privileges through using claims
         let permissions_key = utils::create_prefix_key(PERMISSIONS_PREFIX_KEY, claims.id);
-        let get_permissions = req
-            .state()
-            .redis
-            .send(Command(resp_array!["HGETALL", permissions_key]));
+        let get_permissions = redis.send(Command(resp_array!["HGETALL", permissions_key]));
         let roles_key = utils::create_prefix_key(ROLES_PREFIX_KEY, claims.id);
-        let get_roles = req
-            .state()
-            .redis
-            .send(Command(resp_array!["SMEMBERS", roles_key]));
+        let get_roles = redis.send(Command(resp_array!["SMEMBERS", roles_key]));
         Ok(Started::Future(
             join_all(vec![get_permissions, get_roles])
                 .from_err()

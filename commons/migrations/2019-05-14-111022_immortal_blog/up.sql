@@ -100,6 +100,18 @@ values (1, 1, 1),
        (4, 1, 4),
        (5, 1, 5);
 
+create table if not exists tags
+(
+    id serial primary key ,
+    name varchar not null ,
+    color varchar not null default 'white',
+    created_at    timestamp not null default current_timestamp,
+    updated_at    timestamp not null default current_timestamp,
+    created_by    varchar not null,
+    updated_by    varchar not null
+);
+create unique index tags_name_uindex on tags (name);
+
 -- create trigger function
 create or replace function trigger_set_timestamp()
     returns trigger as

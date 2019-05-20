@@ -14,6 +14,7 @@ extern crate log4rs;
 extern crate redis_async;
 #[macro_use]
 extern crate serde_derive;
+extern crate actix_redis;
 
 use actix_web::server;
 use listenfd::ListenFd;
@@ -22,7 +23,6 @@ use server::{HttpServer, IntoHttpHandler};
 use commons::{configs::BACKEND_LOG_CONFIG,utils};
 
 mod handlers;
-mod pojos;
 mod router;
 mod middlewares;
 mod db_executors;
