@@ -6,7 +6,7 @@ use actix_web::{actix::Addr, AsyncResponder, Json, State};
 use chrono::Utc;
 use futures::{future::join_all, Future, IntoFuture};
 
-use commons::{
+use common::{
     configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
     utils, AppState, AuthInfo, Claims, HandlerResponse, ImmortalError, LoginRequest, LoginResponse,
     Privileges,

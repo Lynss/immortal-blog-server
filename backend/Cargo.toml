@@ -5,7 +5,8 @@ authors = ["龙云 <longyun@co-mall.com>"]
 edition = "2018"
 
 [dependencies]
-commons = { path="../commons" }
+common = { path="../common" }
+db = { path="../db" }
 listenfd = "0.3"
 actix-web = "0.7.18"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }

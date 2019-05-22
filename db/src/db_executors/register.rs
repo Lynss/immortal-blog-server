@@ -1,7 +1,8 @@
 use actix_web::actix::Handler;
 use diesel::{insert_into, prelude::*};
 
-use commons::{schema, utils, DBExecutor, ImmortalError, RegisterRequest, Result};
+use common::{schema, utils, DBExecutor, ImmortalError, Result};
+use crate::pojos::RegisterRequest;
 
 impl Handler<RegisterRequest> for DBExecutor {
     type Result = Result<()>;

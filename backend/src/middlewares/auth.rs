@@ -7,10 +7,11 @@ use actix_web::{
 use futures::{future::join_all, Future};
 use redis_async::resp::FromResp;
 
-use commons::{
+use common::{
     configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
-    utils, AppState, ImmortalError, Privileges,
+    utils, AppState, ImmortalError,
 };
+use model::pojo::Privileges;
 use std::collections::HashMap;
 
 pub struct Auth;

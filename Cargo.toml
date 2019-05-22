@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "commons",
+    "common",
+    "db",
     "backend",
 ]
 

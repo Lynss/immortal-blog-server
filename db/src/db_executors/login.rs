@@ -1,7 +1,7 @@
 use actix_web::actix::Handler;
 use diesel::{prelude::*, sql_query, sql_types::VarChar};
 
-use commons::{utils, AuthInfo, DBExecutor, ImmortalError, LoginRequest, Result};
+use common::{utils, AuthInfo, DBExecutor, ImmortalError, LoginRequest, Result};
 
 impl Handler<LoginRequest> for DBExecutor {
     type Result = Result<AuthInfo>;

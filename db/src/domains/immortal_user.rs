@@ -1,4 +1,3 @@
-use actix_web::{actix::Message, Result};
 use chrono::NaiveDateTime;
 
 use crate::schema::immortal_users;
@@ -15,12 +14,4 @@ pub struct ImmortalUser {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub avatar: String,
-}
-
-pub struct GetUser {
-    pub phone: Option<String>,
-}
-
-impl Message for GetUser {
-    type Result = Result<Vec<ImmortalUser>>;
 }

@@ -20,8 +20,6 @@ pub use dotenv::dotenv;
 
 pub use claims::*;
 pub use db::*;
-pub use domains::*;
-pub use pojos::*;
 pub use immortal_error::*;
 pub use immortal_response::*;
 pub use state::*;
@@ -30,14 +28,11 @@ use std::result;
 mod claims;
 pub mod configs;
 mod db;
-mod domains;
-mod pojos;
 mod immortal_error;
 mod immortal_response;
 pub mod middlewares;
 mod state;
 pub mod utils;
-pub mod schema;
 
 pub type Result<T, E = ImmortalError> = result::Result<T, E>;
 

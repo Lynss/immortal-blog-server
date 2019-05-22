@@ -1,10 +1,9 @@
 use actix_web::Json;
-use diesel::{debug_query, pg::Pg};
-use diesel::query_builder::QueryFragment;
+use diesel::{debug_query, pg::Pg, query_builder::QueryFragment};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;
 
-use crate::{Claims, dotenv, ImmortalError, ImmortalResponse, Result};
+use crate::{dotenv, Claims, ImmortalError, ImmortalResponse, Result};
 
 pub fn success<T: Serialize>(data: T) -> Json<ImmortalResponse<T>> {
     Json(ImmortalResponse {

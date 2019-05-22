@@ -1,8 +1,9 @@
 use actix_web::actix::Message;
-use diesel::sql_types::{Array, Integer, Record, VarChar, Timestamp};
 use chrono::NaiveDateTime;
+use diesel::sql_types::{Array, Integer, Record, Timestamp, VarChar};
 
-use crate::{Result, schema::immortal_users};
+use crate::schema::immortal_users;
+use common::Result;
 use std::collections::HashMap;
 
 #[derive(Deserialize)]
