@@ -1,7 +1,7 @@
 use actix_redis::RedisActor;
 use actix_web::actix::Addr;
 
-use crate::DBExecutor;
+use db::DBExecutor;
 
 #[derive(Clone)]
 pub struct AppState {

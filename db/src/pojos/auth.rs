@@ -2,9 +2,10 @@ use actix_web::actix::Message;
 use chrono::NaiveDateTime;
 use diesel::sql_types::{Array, Integer, Record, Timestamp, VarChar};
 
-use crate::schema::immortal_users;
 use common::Result;
 use std::collections::HashMap;
+
+use crate::schema::immortal_users;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -17,7 +18,7 @@ impl Message for LoginRequest {
     type Result = Result<AuthInfo>;
 }
 
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize)]
 pub struct UserInfo {
     pub nickname: String,
     pub email: String,

@@ -12,7 +12,6 @@ failure = "0.1.5"
 jsonwebtoken = "6.0.0"
 actix-redis = "0.5.1"
 chrono = "0.4.6"
-num_cpus = "1.10.0"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }
 log = "0.4.6"
 dotenv = "0.13.0"

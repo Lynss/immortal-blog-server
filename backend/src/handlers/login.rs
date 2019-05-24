@@ -1,16 +1,17 @@
-use std::collections::HashMap;
-use std::iter::FromIterator;
-
 use actix_redis::{Command, RedisActor, RespValue};
 use actix_web::{actix::Addr, AsyncResponder, Json, State};
 use chrono::Utc;
-use futures::{future::join_all, Future, IntoFuture};
+use futures::{Future, future::join_all, IntoFuture};
 
 use common::{
-    configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
-    utils, AppState, AuthInfo, Claims, HandlerResponse, ImmortalError, LoginRequest, LoginResponse,
-    Privileges,
+    Claims,
+    configs::{EXPIRE_TIME, PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY}, HandlerResponse, ImmortalError, utils,
 };
+use db::pojos::{AuthInfo, LoginRequest, LoginResponse, Privileges, UserInfo};
+use std::collections::HashMap;
+use std::iter::FromIterator;
+
+use crate::AppState;
 
 fn store_privileges(
     redis: Addr<RedisActor>,
@@ -77,12 +78,25 @@ pub fn login(
                         };
                         let token = utils::jwt_encode(&claims, None);
                         //save privileges into redis
-                        store_privileges(redis, &roles, &permissions, id).and_then(|_| {
+                        store_privileges(redis, &roles, &permissions, id).and_then(move |_| {
                             //transform vec to map structure
                             let permissions = HashMap::from_iter(permissions);
                             //get privileges of current user
                             let privileges = Privileges { roles, permissions };
-                            Ok(utils::success(LoginResponse { token, privileges }))
+                            let user_info = UserInfo {
+                                email,
+                                nickname,
+                                phone,
+                                avatar,
+                                created_at,
+                                updated_at,
+                                sex,
+                            };
+                            Ok(utils::success(LoginResponse {
+                                token,
+                                privileges,
+                                user_info,
+                            }))
                         })
                     },
                 )

@@ -1,8 +1,9 @@
 use actix_web::{App, http::Method, middleware::Logger};
 
-use common::{AppState, DBExecutor, middlewares::Cors, RedisActor};
+use common::{middlewares::Cors, RedisActor};
+use db::DBExecutor;
 
-use crate::{handlers, middlewares::Auth};
+use crate::{AppState, handlers, middlewares::Auth};
 
 pub fn init_with_state() -> App<AppState> {
     let db_addr = DBExecutor::init();

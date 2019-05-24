@@ -1,11 +1,11 @@
-use std::env;
-
 use actix_web::actix::{Actor, Addr, SyncArbiter, SyncContext};
 use diesel::{
     pg::PgConnection,
     r2d2::{ConnectionManager, Pool},
 };
 use num_cpus;
+
+use std::env;
 
 pub struct DBExecutor(pub Pool<ConnectionManager<PgConnection>>);
 

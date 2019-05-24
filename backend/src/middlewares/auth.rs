@@ -1,25 +1,27 @@
 use actix_redis::{Command, RespValue};
 use actix_web::{
+    AsyncResponder,
     error::ResponseError,
-    middleware::{Middleware, Response, Started},
-    AsyncResponder, HttpRequest, HttpResponse, Result,
+    HttpRequest, HttpResponse, middleware::{Middleware, Response, Started}, Result,
 };
-use futures::{future::join_all, Future};
+use futures::{Future, future::join_all};
 use redis_async::resp::FromResp;
 
 use common::{
     configs::{PERMISSIONS_PREFIX_KEY, ROLES_PREFIX_KEY},
-    utils, AppState, ImmortalError,
+    ImmortalError, utils,
 };
-use model::pojo::Privileges;
+use db::pojos::Privileges;
 use std::collections::HashMap;
+
+use crate::AppState;
 
 pub struct Auth;
 
 impl Middleware<AppState> for Auth {
     fn start(&self, req: &HttpRequest<AppState>) -> Result<Started> {
         let req = req.clone();
-        let redis = req.state().redis;
+        let redis = req.state().redis.clone();
         let req_path = req.path();
         //some paths have no need to check auth
         if let "/api/login" | "/api/register" = req_path {
@@ -50,7 +52,7 @@ impl Middleware<AppState> for Auth {
                 .from_err()
                 .map(move |res| {
                     if let [Ok(permissions @ RespValue::Array(_)), Ok(roles @ RespValue::Array(_))] = res.as_slice() {
-                        req.extensions_mut().insert(Identity {
+                        req.extensions_mut().insert(Privileges {
                             permissions: HashMap::<String, String>::from_resp(permissions.clone())
                                 .unwrap()
                                 .iter()

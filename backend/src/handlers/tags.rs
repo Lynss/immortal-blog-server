@@ -1,7 +1,9 @@
 use actix_web::{AsyncResponder, State};
 use futures::future;
 
-use common::{AppState, HandlerResponse, utils};
+use common::{HandlerResponse, utils};
+
+use crate::AppState;
 
 pub fn get_tags(_state: State<AppState>) -> HandlerResponse<i32> {
     future::done(Ok(utils::success(1))).responder()

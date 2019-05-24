@@ -1,11 +1,9 @@
 #![feature(async_await, custom_attribute, await_macro)]
 extern crate actix_redis;
-extern crate actix_redis;
 extern crate actix_web;
 extern crate chrono;
 extern crate common;
 extern crate db;
-#[macro_use]
 extern crate diesel;
 extern crate futures;
 extern crate listenfd;
@@ -14,19 +12,18 @@ extern crate log;
 extern crate log4rs;
 #[macro_use]
 extern crate redis_async;
-#[macro_use]
-extern crate serde_derive;
 
 use actix_web::server;
 use listenfd::ListenFd;
 use server::{HttpServer, IntoHttpHandler};
 
 use common::{configs::BACKEND_LOG_CONFIG, utils};
-use db;
+use state::*;
 
 mod handlers;
 mod middlewares;
 mod router;
+mod state;
 
 pub trait HotListener {
     fn hot_listen(self) -> Self;
