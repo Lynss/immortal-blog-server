@@ -3,7 +3,8 @@ use diesel::{debug_query, pg::Pg, query_builder::QueryFragment};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;
 
-use crate::{dotenv, Claims, ImmortalError, ImmortalResponse, Result};
+use crate::{Claims, ImmortalError, ImmortalResponse, Result};
+use dotenv::dotenv;
 
 pub fn success<T: Serialize>(data: T) -> Json<ImmortalResponse<T>> {
     Json(ImmortalResponse {
@@ -47,5 +48,7 @@ pub fn log_sql<T: QueryFragment<Pg>>(query: &T) {
 }
 
 pub fn ready_env() {
-    dotenv().ok();
+    use std::env;
+    dotenv();
+    env::vars().for_each(|(key, value)| debug!("{}:{}", key, value));
 }

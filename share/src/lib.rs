@@ -1,3 +1,4 @@
+#![feature(custom_attribute)]
 extern crate actix_web;
 extern crate chrono;
 extern crate common;
@@ -16,5 +17,5 @@ pub use db::*;
 mod db;
 mod db_executors;
 pub mod domains;
-pub mod pojos;
 mod schema;
+pub mod structs;

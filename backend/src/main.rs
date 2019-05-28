@@ -1,29 +1,30 @@
-#![feature(async_await, custom_attribute, await_macro)]
+#![feature(async_await, await_macro)]
 extern crate actix_redis;
 extern crate actix_web;
 extern crate chrono;
 extern crate common;
-extern crate db;
 extern crate diesel;
 extern crate futures;
 extern crate listenfd;
+extern crate share;
 #[macro_use]
 extern crate log;
 extern crate log4rs;
-#[macro_use]
 extern crate redis_async;
+extern crate actix_session;
 
 use actix_web::server;
 use listenfd::ListenFd;
 use server::{HttpServer, IntoHttpHandler};
-
-use common::{configs::BACKEND_LOG_CONFIG, utils};
+use std::env;
+use common::configs::BACKEND_LOG_CONFIG;
 use state::*;
 
 mod handlers;
 mod middlewares;
 mod router;
 mod state;
+mod utils;
 
 pub trait HotListener {
     fn hot_listen(self) -> Self;
@@ -36,10 +37,11 @@ where
 {
     fn hot_listen(self) -> Self {
         let mut listenfd = ListenFd::from_env();
+        let backend_server_address = env::var("BACKEND_SERVER_ADDRESS").unwrap();
         if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
             self.listen(l)
         } else {
-            self.bind("127.0.0.1:8083").unwrap()
+            self.bind(backend_server_address).unwrap()
         }
     }
 }
@@ -47,6 +49,7 @@ where
 fn main() {
     utils::ready_env();
     log4rs::init_file(BACKEND_LOG_CONFIG, Default::default()).unwrap();
-    info!("Server started on http://localhost:8083");
+    let backend_server_address = env::var("BACKEND_SERVER_ADDRESS").unwrap();
+    info!("Server started on {}", backend_server_address);
     server::new(router::init_with_state).hot_listen().run();
 }

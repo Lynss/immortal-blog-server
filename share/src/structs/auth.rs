@@ -2,10 +2,10 @@ use actix_web::actix::Message;
 use chrono::NaiveDateTime;
 use diesel::sql_types::{Array, Integer, Record, Timestamp, VarChar};
 
+use crate::schema::immortal_users;
 use common::Result;
 use std::collections::HashMap;
-
-use crate::schema::immortal_users;
+use std::iter::FromIterator;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -15,11 +15,12 @@ pub struct LoginRequest {
 }
 
 impl Message for LoginRequest {
-    type Result = Result<AuthInfo>;
+    type Result = Result<UserId>;
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct UserInfo {
+    pub id: i32,
     pub nickname: String,
     pub email: String,
     pub phone: String,
@@ -35,11 +36,55 @@ pub struct Privileges {
     pub permissions: HashMap<String, i32>,
 }
 
+pub struct UserAndPrivilegesInfo(pub UserInfo,pub Privileges);
+
+impl From<AuthInfo> for UserAndPrivilegesInfo {
+    fn from(
+        AuthInfo {
+            id,
+            email,
+            nickname,
+            phone,
+            avatar,
+            created_at,
+            updated_at,
+            sex,
+            roles,
+            permissions,
+        }: AuthInfo,
+    ) -> Self {
+        //transform vec to map structure
+        let permissions = HashMap::from_iter(permissions);
+        //get privileges of current user
+        let privileges = Privileges { roles, permissions };
+        let user_info = UserInfo {
+            id,
+            email,
+            nickname,
+            phone,
+            avatar,
+            created_at,
+            updated_at,
+            sex,
+        };
+        UserAndPrivilegesInfo(user_info, privileges)
+    }
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct LoginResponse {
     pub token: String,
     pub user_info: UserInfo,
     pub privileges: Privileges,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct UserId {
+    pub id: i32,
+}
+
+impl Message for UserId {
+    type Result = Result<UserAndPrivilegesInfo>;
 }
 
 #[derive(Queryable, QueryableByName, Deserialize, Serialize, Debug)]

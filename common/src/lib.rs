@@ -14,7 +14,6 @@ extern crate serde_derive;
 
 pub use actix_redis::RedisActor;
 use actix_web::{FutureResponse, Json};
-pub use dotenv::dotenv;
 
 pub use claims::*;
 pub use immortal_error::*;

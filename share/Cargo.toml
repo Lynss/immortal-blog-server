@@ -1,5 +1,5 @@
 [package]
-name = "db"
+name = "share"
 version = "0.1.0"
 authors = ["龙云 <longyun@co-mall.com>"]
 edition = "2018"

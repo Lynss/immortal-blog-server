@@ -4,7 +4,6 @@ use diesel::{
     r2d2::{ConnectionManager, Pool},
 };
 use num_cpus;
-
 use std::env;
 
 pub struct DBExecutor(pub Pool<ConnectionManager<PgConnection>>);
@@ -15,7 +14,7 @@ impl Actor for DBExecutor {
 
 impl DBExecutor {
     pub fn init() -> Addr<Self> {
-        let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let db_url = env::var("DATABASE_URL").unwrap();
         let manager = ConnectionManager::<PgConnection>::new(db_url);
         //create database pool
         let conn = Pool::builder()

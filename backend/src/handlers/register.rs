@@ -1,10 +1,10 @@
 use actix_web::{AsyncResponder, Json, State};
 use futures::Future;
 
-use common::{HandlerResponse, ImmortalError, utils};
-use db::pojos::RegisterRequest;
+use common::{HandlerResponse, ImmortalError};
+use share::structs::RegisterRequest;
 
-use crate::AppState;
+use crate::{utils, AppState};
 
 pub fn register((info, state): (Json<RegisterRequest>, State<AppState>)) -> HandlerResponse<()> {
     state

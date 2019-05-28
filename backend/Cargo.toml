@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 common = { path="../common" }
-db = { path="../db" }
+share = { path="../share" }
 listenfd = "0.3"
 actix-web = "0.7.18"
 diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }
@@ -18,3 +18,4 @@ futures = "0.1.26"
 chrono = { version = "0.4.6", features = ["serde"] }
 actix-redis = "0.5.1"
 redis-async = "0.4.4"
+actix-session = "0.1.0"
