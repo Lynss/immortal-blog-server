@@ -1,4 +1,4 @@
-use actix_web::Json;
+use actix_web::web::Json;
 use diesel::{debug_query, pg::Pg, query_builder::QueryFragment};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
 use serde::Serialize;

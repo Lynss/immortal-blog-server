@@ -5,14 +5,16 @@ authors = ["lynss <ly1169134156@163.com>"]
 edition = "2018"
 
 [dependencies]
-actix-web = "0.7.18"
-serde = "1.0.90"
-serde_derive = "1.0.90"
+actix-web = "1.0.0-rc"
+serde = "1.0.91"
+serde_derive = "1.0.91"
 failure = "0.1.5"
-jsonwebtoken = "6.0.0"
-actix-redis = "0.5.1"
+jsonwebtoken = "6.0.1"
+actix-redis = { git = "https://github.com/actix/actix-redis.git", features = ["web"] }
 chrono = "0.4.6"
-diesel = { version = "1.4.2",  features = ["postgres","chrono","serde_json", "r2d2"] }
+diesel = { version = "1.4.2", features = ["postgres","chrono","serde_json", "r2d2"] }
 log = "0.4.6"
-dotenv = "0.13.0"
+dotenv = "0.14.1"
+futures = "0.1.27"
+actix-service = "0.4.0"
 

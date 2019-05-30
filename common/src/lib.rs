@@ -1,3 +1,4 @@
+#![feature(trait_alias)]
 extern crate actix_redis;
 extern crate actix_web;
 extern crate chrono;
@@ -11,11 +12,15 @@ extern crate log;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate actix_service;
+extern crate futures;
 
 pub use actix_redis::RedisActor;
-use actix_web::{FutureResponse, Json};
+use actix_web::web::Json;
+use serde::Serialize;
 
 pub use claims::*;
+use futures::Future;
 pub use immortal_error::*;
 pub use immortal_response::*;
 use std::result;
@@ -29,4 +34,5 @@ pub mod utils;
 
 pub type Result<T, E = ImmortalError> = result::Result<T, E>;
 
-pub type HandlerResponse<T> = FutureResponse<Json<ImmortalResponse<T>>, ImmortalError>;
+pub trait HandlerResponse<T: Serialize> =
+    Future<Item = Json<ImmortalResponse<T>>, Error = ImmortalError>;

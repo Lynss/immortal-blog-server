@@ -1,6 +1,7 @@
 use actix_web::{
     error::ResponseError,
-    middleware::{Middleware, Started}, HttpRequest, Result,
+    middleware::{Middleware, Started},
+    HttpRequest, Result,
 };
 
 use common::ImmortalError;
