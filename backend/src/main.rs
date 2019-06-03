@@ -69,6 +69,7 @@ fn main() {
 
     let mut server = HttpServer::new(app);
 
+    info!("Server started on {}", backend_server_address);
     let mut listenfd = ListenFd::from_env();
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen(l).unwrap()
