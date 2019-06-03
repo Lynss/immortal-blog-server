@@ -17,4 +17,5 @@ log = "0.4.6"
 dotenv = "0.14.1"
 futures = "0.1.27"
 actix-service = "0.4.0"
+actix = { version = "0.8.1", features = ["http"] }
 

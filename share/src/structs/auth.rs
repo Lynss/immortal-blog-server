@@ -1,4 +1,4 @@
-use actix_web::actix::Message;
+use actix::Message;
 use chrono::NaiveDateTime;
 use diesel::sql_types::{Array, Integer, Record, Timestamp, VarChar};
 
@@ -36,7 +36,7 @@ pub struct Privileges {
     pub permissions: HashMap<String, i32>,
 }
 
-pub struct UserAndPrivilegesInfo(pub UserInfo,pub Privileges);
+pub struct UserAndPrivilegesInfo(pub UserInfo, pub Privileges);
 
 impl From<AuthInfo> for UserAndPrivilegesInfo {
     fn from(

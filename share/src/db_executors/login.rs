@@ -1,4 +1,4 @@
-use actix_web::actix::Handler;
+use actix::Handler;
 use diesel::prelude::*;
 
 use common::{utils, ImmortalError, Result};

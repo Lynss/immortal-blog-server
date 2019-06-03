@@ -20,3 +20,5 @@ actix-redis = { git = "https://github.com/actix/actix-redis.git", features = ["w
 redis-async = "0.4.5"
 actix-session = "0.1.0"
 actix-service = "0.4.0"
+actix = { version = "0.8.1", features = ["http"] }
+actix-http = "0.2.0"

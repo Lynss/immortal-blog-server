@@ -1,4 +1,4 @@
-use actix_web::actix::{Actor, Addr, SyncArbiter, SyncContext};
+use actix::{Actor, Addr, SyncArbiter, SyncContext};
 use diesel::{
     pg::PgConnection,
     r2d2::{ConnectionManager, Pool},
@@ -21,6 +21,7 @@ impl DBExecutor {
             .max_size(10)
             .build(manager)
             .expect("Failed to create pool.");
-        SyncArbiter::start(num_cpus::get(), move || DBExecutor(conn.clone()))
+        info!("cpu nums:{}", num_cpus::get());
+        SyncArbiter::start(4, move || DBExecutor(conn.clone()))
     }
 }

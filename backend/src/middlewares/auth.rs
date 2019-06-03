@@ -1,8 +1,4 @@
-use actix_web::{
-    error::ResponseError,
-    middleware::{Middleware, Started},
-    HttpRequest, Result,
-};
+use actix_web::{error::ResponseError, HttpRequest, Result};
 
 use common::ImmortalError;
 

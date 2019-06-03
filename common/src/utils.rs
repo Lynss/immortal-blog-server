@@ -49,6 +49,6 @@ pub fn log_sql<T: QueryFragment<Pg>>(query: &T) {
 
 pub fn ready_env() {
     use std::env;
-    dotenv();
+    dotenv().ok();
     env::vars().for_each(|(key, value)| debug!("{}:{}", key, value));
 }

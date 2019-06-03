@@ -16,3 +16,4 @@ actix-web = "1.0.0-rc"
 num_cpus = "1.10.0"
 serde = "1.0.91"
 log = "0.4.6"
+actix = { version = "0.8.1", features = ["http"] }

@@ -2,7 +2,6 @@ use actix_session::Session;
 use actix_web::web::{Data, Json};
 use chrono::Utc;
 use common::{configs::EXPIRE_TIME, Claims, HandlerResponse, ImmortalError};
-use futures::{Future, IntoFuture};
 use share::structs::{LoginRequest, LoginResponse, UserAndPrivilegesInfo, UserId};
 
 use crate::{utils, AppState};
@@ -11,7 +10,7 @@ pub fn login(
     info: Json<LoginRequest>,
     state: Data<AppState>,
     session: Session,
-) ->impl HandlerResponse<LoginResponse> {
+) -> impl HandlerResponse<LoginResponse> {
     let db = state.db.clone();
     state
         .db
@@ -27,8 +26,8 @@ pub fn login(
             };
             let token = utils::jwt_encode(&claims, None);
             utils::get_user_and_privileges_info(db, id).map(
-                |UserAndPrivilegesInfo(user_info, privileges)| {
-                    utils::storage_user_and_privileges_info(user_info, privileges, id, session);
+                move |UserAndPrivilegesInfo(user_info, privileges)| {
+                    utils::storage_user_and_privileges_info(&user_info, &privileges, id, session);
                     utils::success(LoginResponse {
                         token,
                         privileges,
