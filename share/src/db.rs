@@ -18,10 +18,10 @@ impl DBExecutor {
         let manager = ConnectionManager::<PgConnection>::new(db_url);
         //create database pool
         let conn = Pool::builder()
-            .max_size(10)
+            .max_size(1)
             .build(manager)
             .expect("Failed to create pool.");
         info!("cpu nums:{}", num_cpus::get());
-        SyncArbiter::start(4, move || DBExecutor(conn.clone()))
+        SyncArbiter::start(1, move || DBExecutor(conn.clone()))
     }
 }

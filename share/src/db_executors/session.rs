@@ -27,7 +27,7 @@ from immortal_users u
          left join role_permissions rp
                    on rp.role_id = r.id
          left join permissions p on rp.permission_id = p.id
-where id = $1
+where u.id = $1
 group by u.id
 limit 1;
 ";

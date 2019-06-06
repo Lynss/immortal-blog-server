@@ -7,6 +7,7 @@ edition = "2018"
 [dependencies]
 common = { path="../common" }
 share = { path="../share" }
+privilege_macro = { path="../privilege_macro" }
 listenfd = "0.3.3"
 actix-web = "1.0.0-rc"
 diesel = { version = "1.4.2", features = ["postgres","chrono","serde_json", "r2d2"] }

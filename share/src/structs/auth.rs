@@ -1,8 +1,8 @@
 use actix::Message;
 use chrono::NaiveDateTime;
-use diesel::sql_types::{Array, Integer, Record, Timestamp, VarChar};
+use diesel::sql_types::{Array, Integer, Nullable, Record, Timestamp, VarChar};
 
-use crate::schema::immortal_users;
+use crate::{domains::ImmortalUser, schema::immortal_users};
 use common::Result;
 use std::collections::HashMap;
 use std::iter::FromIterator;
@@ -23,11 +23,39 @@ pub struct UserInfo {
     pub id: i32,
     pub nickname: String,
     pub email: String,
-    pub phone: String,
+    pub phone: Option<String>,
     pub avatar: String,
     pub sex: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+impl From<ImmortalUser> for UserInfo {
+    fn from(
+        ImmortalUser {
+            nickname,
+            id,
+            email,
+            phone,
+            avatar,
+            sex,
+            created_at,
+            updated_at,
+            password: _,
+            roles: _,
+        }: ImmortalUser,
+    ) -> Self {
+        UserInfo {
+            nickname,
+            id,
+            email,
+            phone,
+            avatar,
+            sex,
+            created_at,
+            updated_at,
+        }
+    }
 }
 
 #[derive(Deserialize, Serialize)]
@@ -95,8 +123,8 @@ pub struct AuthInfo {
     pub nickname: String,
     #[sql_type = "VarChar"]
     pub email: String,
-    #[sql_type = "VarChar"]
-    pub phone: String,
+    #[sql_type = "Nullable<VarChar>"]
+    pub phone: Option<String>,
     #[sql_type = "VarChar"]
     pub avatar: String,
     #[sql_type = "Integer"]

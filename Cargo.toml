@@ -2,6 +2,7 @@
 members = [
     "common",
     "share",
+    "privilege_macro",
     "backend",
 ]
 

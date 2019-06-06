@@ -1,10 +1,12 @@
+use actix_http::Response;
 use actix_service::{Service, Transform};
-use actix_web::dev::{ServiceRequest, ServiceResponse};
 use actix_web::{
+    dev::{ServiceRequest, ServiceResponse},
     http::header::{self, HeaderValue},
     middleware::cors::AllOrSome,
     Error,
 };
+use futures::future::IntoFuture;
 use futures::{
     future::{self, FutureResult},
     Future,
@@ -67,7 +69,17 @@ where
 
     fn call(&mut self, req: ServiceRequest) -> Self::Future {
         let allowed_origins = (&self.allowed_origins).clone();
-        Box::new(self.service.call(req).and_then(move |mut resp| {
+        let method = req.method().clone();
+        let resp_future: Box<dyn Future<Item = ServiceResponse<B>, Error = _>> =
+            if method == "OPTIONS" {
+                Box::new(
+                    req.into_response(Response::Ok().finish().into_body())
+                        .into_future(),
+                )
+            } else {
+                Box::new(self.service.call(req))
+            };
+        Box::new(resp_future.and_then(|mut resp| {
             let resp_headers = resp.headers_mut();
             match allowed_origins {
                 AllOrSome::All => resp_headers.insert(

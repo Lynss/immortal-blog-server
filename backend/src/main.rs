@@ -12,6 +12,7 @@ extern crate actix_http;
 extern crate actix_service;
 extern crate actix_session;
 extern crate log4rs;
+extern crate privilege_macro;
 extern crate redis_async;
 
 use actix_redis::RedisSession;
@@ -54,6 +55,10 @@ fn main() {
                     .service(
                         web::resource("/privileges")
                             .route(web::get().to_async(handlers::get_privileges)),
+                    )
+                    .service(
+                        web::resource("/users")
+                            .route(web::get().to_async(handlers::get_user_info_by_conditions)),
                     )
                     .service(
                         web::resource("/tags")
