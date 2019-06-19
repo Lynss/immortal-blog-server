@@ -7,9 +7,9 @@ edition = "2018"
 [dependencies]
 common = { path="../common" }
 share = { path="../share" }
-privilege_macro = { path="../privilege_macro" }
+immortal_blog_derive = { path="../immortal_blog_derive" }
 listenfd = "0.3.3"
-actix-web = "1.0.0-rc"
+actix-web = "1.0.0"
 diesel = { version = "1.4.2", features = ["postgres","chrono","serde_json", "r2d2"] }
 serde = "1.0.91"
 serde_json = "1.0.39"

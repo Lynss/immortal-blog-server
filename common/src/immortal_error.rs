@@ -9,6 +9,8 @@ pub enum ImmortalError {
     Unauthorized { err_msg: &'static str },
     #[fail(display = "Forbidden.{}", err_msg)]
     Forbidden { err_msg: &'static str },
+    #[fail(display = "Bad request.{}", err_msg)]
+    BadRequest { err_msg: &'static str },
 }
 
 impl ImmortalError {
@@ -32,6 +34,11 @@ impl ResponseError for ImmortalError {
             ImmortalError::Forbidden { err_msg } => HttpResponseBuilder::new(StatusCode::FORBIDDEN)
                 .reason(err_msg)
                 .finish(),
+            ImmortalError::BadRequest { err_msg } => {
+                HttpResponseBuilder::new(StatusCode::BAD_REQUEST)
+                    .reason(err_msg)
+                    .finish()
+            }
         }
     }
 }

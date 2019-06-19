@@ -2,7 +2,7 @@
 members = [
     "common",
     "share",
-    "privilege_macro",
+    "immortal_blog_derive",
     "backend",
 ]
 

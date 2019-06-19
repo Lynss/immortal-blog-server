@@ -94,7 +94,7 @@ where
             };
             resp_headers.insert(
                 header::ACCESS_CONTROL_ALLOW_METHODS,
-                HeaderValue::from_static("POST,GET,OPTIONS,DELETE"),
+                HeaderValue::from_static("POST,GET,OPTIONS,PUT,DELETE"),
             );
             resp_headers.insert(
                 header::ACCESS_CONTROL_ALLOW_HEADERS,

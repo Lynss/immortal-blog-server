@@ -1,5 +1,5 @@
 [package]
-name = "privilege_macro"
+name = "immortal_blog_derive"
 version = "0.1.0"
 authors = ["longyun <ly1169134156@163.com>"]
 edition = "2018"
@@ -12,3 +12,4 @@ proc-macro=true
 [dependencies]
 syn = "0.15.34"
 quote = "0.6.12"
+serde_json = "1.0.39"

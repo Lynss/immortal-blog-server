@@ -11,8 +11,8 @@ extern crate log;
 extern crate actix_http;
 extern crate actix_service;
 extern crate actix_session;
+extern crate immortal_blog_derive;
 extern crate log4rs;
-extern crate privilege_macro;
 extern crate redis_async;
 
 use actix_redis::RedisSession;
@@ -47,7 +47,6 @@ fn main() {
             })
             .wrap(Logger::default())
             .wrap(Cors::new(origins))
-            //        .wrap(Auth)
             // redis session middleware
             .wrap(RedisSession::new(redis_address.as_str(), &[0; 32]))
             .service(
@@ -57,13 +56,29 @@ fn main() {
                             .route(web::get().to_async(handlers::get_privileges)),
                     )
                     .service(
-                        web::resource("/users")
-                            .route(web::get().to_async(handlers::get_user_info_by_conditions)),
+                        web::scope("/users")
+                            .service(
+                                web::resource("").route(
+                                    web::get().to_async(handlers::get_user_info_by_conditions),
+                                ),
+                            )
+                            .service(
+                                web::resource("/is_repeated")
+                                    .route(web::get().to_async(handlers::check_repeated_user)),
+                            ),
                     )
                     .service(
-                        web::resource("/tags")
-                            .route(web::post().to_async(handlers::create_tag))
-                            .route(web::get().to_async(handlers::get_tags)),
+                        web::scope("/tags")
+                            .service(
+                                web::resource("")
+                                    .route(web::get().to_async(handlers::get_tags))
+                                    .route(web::post().to_async(handlers::create_tag))
+                                    .route(web::delete().to_async(handlers::delete_tag)),
+                            )
+                            .service(
+                                web::resource("/{id}")
+                                    .route(web::put().to_async(handlers::update_tag)),
+                            ),
                     )
                     .service(web::resource("/login").route(web::post().to_async(handlers::login)))
                     .service(

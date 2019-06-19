@@ -1,7 +1,8 @@
 use actix_web::web::Json;
+use chrono::NaiveDateTime;
 use diesel::{debug_query, pg::Pg, query_builder::QueryFragment};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Header, Validation};
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 use crate::{Claims, ImmortalError, ImmortalResponse, Result};
 use dotenv::dotenv;
@@ -51,4 +52,14 @@ pub fn ready_env() {
     use std::env;
     dotenv().ok();
     env::vars().for_each(|(key, value)| debug!("{}:{}", key, value));
+}
+
+const FORMAT: &'static str = "%Y-%m-%d %H:%M:%S";
+
+pub fn format_time<S>(date: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let s = format!("{}", date.format(FORMAT));
+    serializer.serialize_str(&s)
 }
