@@ -80,6 +80,19 @@ fn main() {
                                     .route(web::put().to_async(handlers::update_tag)),
                             ),
                     )
+                    .service(
+                        web::scope("/categories")
+                            .service(
+                                web::resource("")
+                                    .route(web::get().to_async(handlers::get_categories))
+                                    .route(web::post().to_async(handlers::create_category))
+                                    .route(web::delete().to_async(handlers::delete_category)),
+                            )
+                            .service(
+                                web::resource("/{id}")
+                                    .route(web::put().to_async(handlers::update_category)),
+                            ),
+                    )
                     .service(web::resource("/login").route(web::post().to_async(handlers::login)))
                     .service(
                         web::resource("/register").route(web::post().to_async(handlers::register)),

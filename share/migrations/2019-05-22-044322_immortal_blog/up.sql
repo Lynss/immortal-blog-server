@@ -4,7 +4,9 @@ create table if not exists blogs
     id         serial primary key,
     data       jsonb     not null,
     created_at timestamp not null default current_timestamp,
-    updated_at timestamp not null default current_timestamp
+    updated_at timestamp not null default current_timestamp,
+    created_by varchar   not null,
+    updated_by varchar   not null
 );
 
 create table if not exists immortal_users
@@ -21,13 +23,15 @@ create table if not exists immortal_users
     avatar     varchar   not null default ''
 );
 comment on column immortal_users.sex is '0->male 1->female 2->unknown';
-create unique index immortal_user_nickname_uindex
+create unique index immortal_users_nickname_uindex
     on immortal_users (nickname);
-create index immortal_user_roles_index
+create unique index immortal_users_email_uindex
+    on immortal_users (email);
+create index immortal_users_roles_index
     on immortal_users (roles);
-create index immortal_user_created_at_index
+create index immortal_users_created_at_index
     on immortal_users (created_at);
-create index immortal_user_updated_at_index
+create index immortal_users_updated_at_index
     on immortal_users (updated_at);
 insert into immortal_users (nickname, password, roles, email, phone, sex)
 values ('lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0);
@@ -41,11 +45,11 @@ create table if not exists roles
     updated_at timestamp not null default current_timestamp
 );
 create unique index role_name_uindex on roles (name);
-create index role_created_at_index
+create index roles_created_at_index
     on roles (created_at);
-create index role_updated_at_index
+create index roles_updated_at_index
     on roles (updated_at);
-create index role_status_index on roles (status);
+create index roles_status_index on roles (status);
 comment on column roles.status is '0 for disabled,1 for enabled';
 
 -- initial roles
@@ -64,12 +68,12 @@ create table if not exists permissions
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
-create unique index permission_name_uindex on permissions (name);
-create index permission_created_at_index
+create unique index permissions_name_uindex on permissions (name);
+create index permissions_created_at_index
     on permissions (created_at);
-create index permission_updated_at_index
+create index permissions_updated_at_index
     on permissions (updated_at);
-create index permission_status_index
+create index permissions_status_index
     on permissions (status);
 insert into permissions (name)
 values ('all');
@@ -85,12 +89,12 @@ create table if not exists role_permissions
     created_at    timestamp not null default current_timestamp,
     updated_at    timestamp not null default current_timestamp
 );
-create index role_permission_role_id_index on role_permissions (role_id);
-create index role_permission_permission_id_index on role_permissions (permission_id);
-create index role_permission_level_index on role_permissions (level);
-create index role_permission_created_at_index
+create index role_permissions_role_id_index on role_permissions (role_id);
+create index role_permissions_permission_id_index on role_permissions (permission_id);
+create index role_permissions_level_index on role_permissions (level);
+create index role_permissions_created_at_index
     on role_permissions (created_at);
-create index role_permission_updated_at_index
+create index role_permissions_updated_at_index
     on role_permissions (updated_at);
 comment on column role_permissions.permission_id is '0 is considered * means a role has same level on all permissions';
 insert into role_permissions (role_id, permission_id, level)
@@ -102,15 +106,43 @@ values (1, 1, 1),
 
 create table if not exists tags
 (
-    id serial primary key ,
-    name varchar not null ,
-    color varchar not null default 'white',
-    created_at    timestamp not null default current_timestamp,
-    updated_at    timestamp not null default current_timestamp,
-    created_by    varchar not null,
-    updated_by    varchar not null
+    id         serial primary key,
+    name       varchar   not null,
+    color      varchar   not null,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp,
+    created_by varchar   not null default 'system',
+    updated_by varchar   not null default 'system'
 );
 create unique index tags_name_uindex on tags (name);
+create index tags_created_at_index
+    on tags (created_at);
+create index tags_updated_at_index
+    on tags (updated_at);
+create index tags_created_by_index
+    on tags (created_by);
+create index tags_updated_by_index
+    on tags (updated_by);
+
+create table if not exists categories
+(
+    id          serial primary key,
+    name        varchar   not null,
+    description varchar,
+    created_at  timestamp not null default current_timestamp,
+    updated_at  timestamp not null default current_timestamp,
+    created_by  varchar   not null default 'system',
+    updated_by  varchar   not null default 'system'
+);
+create unique index categories_name_uindex on categories (name);
+create index categories_created_at_index
+    on categories (created_at);
+create index categories_updated_at_index
+    on categories (updated_at);
+create index categories_created_by_index
+    on categories (created_by);
+create index categories_updated_by_index
+    on categories (updated_by);
 
 -- create trigger function
 create or replace function trigger_set_timestamp()

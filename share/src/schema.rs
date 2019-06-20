@@ -4,6 +4,20 @@ table! {
         data -> Jsonb,
         created_at -> Timestamp,
         updated_at -> Timestamp,
+        created_by -> Varchar,
+        updated_by -> Varchar,
+    }
+}
+
+table! {
+    categories (id) {
+        id -> Int4,
+        name -> Varchar,
+        description -> Nullable<Varchar>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+        created_by -> Varchar,
+        updated_by -> Varchar,
     }
 }
 
@@ -67,6 +81,7 @@ table! {
 
 allow_tables_to_appear_in_same_query!(
     blogs,
+    categories,
     immortal_users,
     permissions,
     role_permissions,

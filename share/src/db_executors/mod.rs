@@ -1,3 +1,4 @@
+mod category;
 mod login;
 mod register;
 mod session;
