@@ -3,7 +3,6 @@ use actix_web::web::{Data, HttpRequest, Json, Path};
 use common::{extractors::ComplexQuery, HandlerResponse, ImmortalError};
 
 use crate::{utils, AppState};
-use futures::future::IntoFuture;
 use immortal_blog_derive::require_permissions;
 use share::{
     domains::Category,
@@ -18,29 +17,12 @@ pub fn get_categories(
     state: Data<AppState>,
     conditions: ComplexQuery<TableRequest<CategoryConditions>>,
 ) -> impl HandlerResponse<TableResponse<Category>> {
-    utils::get_user_id_from_header(&req)
-        .map(|id| utils::get_user_and_privileges_info_from_session(id, &req))
-        .into_future()
+    state
+        .db
+        .send(conditions.into_inner())
+        .map_err(ImmortalError::ignore)
         .flatten()
-        .and_then(move |UserAndPrivilegesInfo(user_info, privileges)| {
-            //Each category can only be shown to its create user unless current user has immortal role
-            let mut conditions = conditions.into_inner();
-            if !privileges.roles.contains(&"immortal".to_owned()) {
-                let created_by = user_info.nickname;
-                let mut data = conditions.data.unwrap_or_default();
-                data.created_by = Some(created_by);
-                conditions = TableRequest {
-                    data: Some(data),
-                    ..conditions
-                }
-            }
-            state
-                .db
-                .send(conditions)
-                .map_err(ImmortalError::ignore)
-                .flatten()
-                .map(utils::success)
-        })
+        .map(utils::success)
 }
 
 #[require_permissions(category = "3")]
@@ -48,11 +30,8 @@ pub fn create_category(
     state: Data<AppState>,
     category_creation_info: Json<CategoryCreateInfo>,
 ) -> impl HandlerResponse<()> {
-    utils::get_user_id_from_header(&req)
-        .map(|id| utils::get_user_and_privileges_info_from_session(id, &req))
-        .into_future()
-        .flatten()
-        .and_then(move |UserAndPrivilegesInfo(user_info, _)| {
+    utils::get_user_and_privileges_info_from_request(&req).and_then(
+        move |UserAndPrivilegesInfo(user_info, _)| {
             state
                 .db
                 .send(CategoryCreate::new(
@@ -62,7 +41,8 @@ pub fn create_category(
                 .map_err(ImmortalError::ignore)
                 .flatten()
                 .map(utils::success)
-        })
+        },
+    )
 }
 
 #[require_permissions(category = "3")]

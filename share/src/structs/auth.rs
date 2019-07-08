@@ -1,9 +1,12 @@
 use actix::Message;
 use chrono::NaiveDateTime;
-use diesel::sql_types::{Array, Integer, Nullable, Record, Timestamp, VarChar};
+use diesel::sql_types::{Array, Bool, Integer, Nullable, Record, Timestamp, VarChar};
 
-use crate::{domains::ImmortalUser, schema::immortal_users};
-use common::Result;
+use crate::{
+    domains::{ImmortalUser, Role},
+    schema::immortal_users,
+};
+use common::{utils, Result};
 use std::collections::HashMap;
 use std::iter::FromIterator;
 
@@ -18,15 +21,19 @@ impl Message for LoginRequest {
     type Result = Result<UserId>;
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Queryable, Debug)]
 pub struct UserInfo {
     pub id: i32,
     pub nickname: String,
+    pub roles: Vec<i32>,
     pub email: String,
     pub phone: Option<String>,
     pub avatar: String,
+    pub activated: bool,
     pub sex: i32,
+    #[serde(with = "utils::date_format")]
     pub created_at: NaiveDateTime,
+    #[serde(with = "utils::date_format")]
     pub updated_at: NaiveDateTime,
 }
 
@@ -42,11 +49,14 @@ impl From<ImmortalUser> for UserInfo {
             created_at,
             updated_at,
             password: _,
-            roles: _,
+            roles,
+            activated,
         }: ImmortalUser,
     ) -> Self {
         UserInfo {
             nickname,
+            roles,
+            activated,
             id,
             email,
             phone,
@@ -58,7 +68,7 @@ impl From<ImmortalUser> for UserInfo {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Privileges {
     pub roles: Vec<String>,
     pub permissions: HashMap<String, i32>,
@@ -78,6 +88,8 @@ impl From<AuthInfo> for UserAndPrivilegesInfo {
             updated_at,
             sex,
             roles,
+            role_ids,
+            activated,
             permissions,
         }: AuthInfo,
     ) -> Self {
@@ -94,6 +106,8 @@ impl From<AuthInfo> for UserAndPrivilegesInfo {
             created_at,
             updated_at,
             sex,
+            activated,
+            roles: role_ids,
         };
         UserAndPrivilegesInfo(user_info, privileges)
     }
@@ -115,7 +129,7 @@ impl Message for UserId {
     type Result = Result<UserAndPrivilegesInfo>;
 }
 
-#[derive(Queryable, QueryableByName, Deserialize, Serialize, Debug)]
+#[derive(Queryable, QueryableByName, Deserialize, Serialize, Debug, Clone)]
 pub struct AuthInfo {
     #[sql_type = "Integer"]
     pub id: i32,
@@ -135,6 +149,10 @@ pub struct AuthInfo {
     pub updated_at: NaiveDateTime,
     #[sql_type = "Array<VarChar>"]
     pub roles: Vec<String>,
+    #[sql_type = "Array<Integer>"]
+    pub role_ids: Vec<i32>,
+    #[sql_type = "Bool"]
+    pub activated: bool,
     #[sql_type = "Array<Record<(VarChar,Integer)>>"]
     pub permissions: Vec<(String, i32)>,
 }
@@ -150,4 +168,10 @@ pub struct RegisterRequest {
 
 impl Message for RegisterRequest {
     type Result = Result<()>;
+}
+
+pub struct GetRoleOptions;
+
+impl Message for GetRoleOptions {
+    type Result = Result<Vec<Role>>;
 }

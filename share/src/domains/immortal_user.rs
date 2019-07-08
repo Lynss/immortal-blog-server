@@ -11,6 +11,7 @@ pub struct ImmortalUser {
     pub email: String,
     pub phone: Option<String>,
     pub sex: i32,
+    pub activated: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub avatar: String,

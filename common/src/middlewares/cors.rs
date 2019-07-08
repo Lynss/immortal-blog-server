@@ -1,9 +1,9 @@
+use actix_cors::AllOrSome;
 use actix_http::Response;
 use actix_service::{Service, Transform};
 use actix_web::{
     dev::{ServiceRequest, ServiceResponse},
     http::header::{self, HeaderValue},
-    middleware::cors::AllOrSome,
     Error,
 };
 use futures::future::IntoFuture;

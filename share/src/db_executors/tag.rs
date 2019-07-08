@@ -50,10 +50,10 @@ impl Handler<TableRequest<TagConditions>> for DBExecutor {
                         query = query.order(updated_at.asc());
                     }
                     ("created_at", "descend") => {
-                        query = query.order(updated_at.desc());
+                        query = query.order(created_at.desc());
                     }
                     ("created_at", "ascend") => {
-                        query = query.order(updated_at.asc());
+                        query = query.order(created_at.asc());
                     }
                     _ => warn!("Invalid sort info"),
                 }

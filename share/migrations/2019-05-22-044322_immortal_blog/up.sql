@@ -5,8 +5,8 @@ create table if not exists blogs
     data       jsonb     not null,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
-    created_by varchar   not null,
-    updated_by varchar   not null
+    created_by varchar   not null default 'system',
+    updated_by varchar   not null default 'system'
 );
 
 create table if not exists immortal_users
@@ -18,6 +18,7 @@ create table if not exists immortal_users
     email      varchar   not null,
     phone      varchar,
     sex        int       not null default 2,
+    activated  boolean   not null default false,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     avatar     varchar   not null default ''
@@ -33,8 +34,14 @@ create index immortal_users_created_at_index
     on immortal_users (created_at);
 create index immortal_users_updated_at_index
     on immortal_users (updated_at);
-insert into immortal_users (nickname, password, roles, email, phone, sex)
-values ('lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0);
+insert into immortal_users (nickname, password, roles, email, phone, sex,activated)
+values
+       ('lynss', 'lynss', '{5}', 'ly1169134156@163.com', '17764189136', 0,true),
+       ('immortal', 'immortal', '{5}', 'immortal@163.com', '', 2,false),
+       ('brahmin', 'brahmin', '{4}', 'brahmin@163.com', '', 2,false),
+       ('kshatriya', 'kshatriya', '{3}', 'kshatriya@163.com', '', 2,false),
+       ('vaishya', 'vaishya', '{2}', 'vaishya@163.com', '', 2,false),
+       ('untouchable', 'untouchable', '{1}', 'untouchable@163.com', '', 2,false);
 
 create table if not exists roles
 (
@@ -78,7 +85,12 @@ create index permissions_status_index
 insert into permissions (name)
 values ('all');
 comment on column permissions.status is '0 for disabled,1 for enabled';
-
+insert into permissions (name, status)
+values
+       ('tag',1),
+       ('user',1),
+       ('category',1),
+       ('role',1);
 
 create table if not exists role_permissions
 (

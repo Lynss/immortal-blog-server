@@ -20,6 +20,8 @@ impl Handler<UserId> for DBExecutor {
        u.updated_at,
        u.sex,
        u.email,
+       u.roles as role_ids,
+       u.activated,
        array_agg(r.name)                as roles,
        array_agg(row (p.name,rp.level)) as permissions
 from immortal_users u

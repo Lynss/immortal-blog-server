@@ -11,5 +11,7 @@ drop table role_permissions;
 
 drop table tags;
 
+drop table categories;
+
 drop function trigger_set_timestamp();
 

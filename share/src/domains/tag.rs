@@ -7,9 +7,9 @@ pub struct Tag {
     pub id: i32,
     pub name: String,
     pub color: String,
-    #[serde(serialize_with = "utils::format_time")]
+    #[serde(with = "utils::date_format")]
     pub created_at: NaiveDateTime,
-    #[serde(serialize_with = "utils::format_time")]
+    #[serde(with = "utils::date_format")]
     pub updated_at: NaiveDateTime,
     pub created_by: String,
     pub updated_by: String,

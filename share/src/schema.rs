@@ -30,6 +30,7 @@ table! {
         email -> Varchar,
         phone -> Nullable<Varchar>,
         sex -> Int4,
+        activated -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,
         avatar -> Varchar,

@@ -15,7 +15,7 @@ pub enum ImmortalError {
 
 impl ImmortalError {
     pub fn ignore<T: Debug>(err: T) -> Self {
-        error!("Error caused by {:?}", err);
+        error!("Error caused by {:#?}", err);
         ImmortalError::InternalError
     }
 }

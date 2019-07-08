@@ -1,21 +1,9 @@
-extern crate actix_redis;
-extern crate actix_web;
-extern crate chrono;
-extern crate common;
-extern crate diesel;
-extern crate futures;
-extern crate listenfd;
-extern crate share;
 #[macro_use]
 extern crate log;
-extern crate actix_http;
-extern crate actix_service;
-extern crate actix_session;
-extern crate immortal_blog_derive;
-extern crate log4rs;
+#[macro_use]
 extern crate redis_async;
 
-use actix_redis::RedisSession;
+use actix_files::Files;
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use common::{configs::BACKEND_LOG_CONFIG, RedisActor};
 use listenfd::ListenFd;
@@ -47,20 +35,37 @@ fn main() {
             })
             .wrap(Logger::default())
             .wrap(Cors::new(origins))
-            // redis session middleware
-            .wrap(RedisSession::new(redis_address.as_str(), &[0; 32]))
+            .service(web::resource("/upload").route(web::post().to_async(handlers::upload_file)))
+            //          //static files
+            .service(Files::new("/static", "./static").show_files_listing())
             .service(
                 web::scope("/api")
                     .service(
-                        web::resource("/privileges")
-                            .route(web::get().to_async(handlers::get_privileges)),
+                        web::scope("/roles").service(
+                            web::resource("/options")
+                                .route(web::get().to_async(handlers::get_role_options)),
+                        ),
                     )
                     .service(
                         web::scope("/users")
                             .service(
-                                web::resource("").route(
-                                    web::get().to_async(handlers::get_user_info_by_conditions),
-                                ),
+                                web::resource("").route(web::get().to_async(handlers::get_users)),
+                            )
+                            .service(
+                                web::resource("/forbidden")
+                                    .route(web::put().to_async(handlers::forbid_users)),
+                            )
+                            .service(
+                                web::resource("/activated")
+                                    .route(web::post().to_async(handlers::activated_users)),
+                            )
+                            .service(
+                                web::resource("/settings")
+                                    .route(web::get().to_async(handlers::get_user_settings)),
+                            )
+                            .service(
+                                web::resource("/options")
+                                    .route(web::get().to_async(handlers::get_author_options)),
                             )
                             .service(
                                 web::resource("/is_repeated")
@@ -76,6 +81,10 @@ fn main() {
                                     .route(web::delete().to_async(handlers::delete_tag)),
                             )
                             .service(
+                                web::resource("/options")
+                                    .route(web::get().to_async(handlers::get_author_options)),
+                            )
+                            .service(
                                 web::resource("/{id}")
                                     .route(web::put().to_async(handlers::update_tag)),
                             ),
@@ -87,6 +96,10 @@ fn main() {
                                     .route(web::get().to_async(handlers::get_categories))
                                     .route(web::post().to_async(handlers::create_category))
                                     .route(web::delete().to_async(handlers::delete_category)),
+                            )
+                            .service(
+                                web::resource("/options")
+                                    .route(web::get().to_async(handlers::get_author_options)),
                             )
                             .service(
                                 web::resource("/{id}")
