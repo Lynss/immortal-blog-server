@@ -1,5 +1,5 @@
-use actix_redis::RedisActor;
 use actix::Addr;
+use actix_redis::RedisActor;
 
 use share::DBExecutor;
 

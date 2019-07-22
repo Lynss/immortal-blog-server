@@ -36,8 +36,9 @@ fn main() {
             .wrap(Logger::default())
             .wrap(Cors::new(origins))
             .service(web::resource("/upload").route(web::post().to_async(handlers::upload_file)))
-            //          //static files
+            //static files
             .service(Files::new("/static", "./static").show_files_listing())
+            .service(web::resource("/ws/").route(web::get().to(handlers::ws_message_handler)))
             .service(
                 web::scope("/api")
                     .service(

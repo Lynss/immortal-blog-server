@@ -148,6 +148,6 @@ pub fn create_active_email() -> String {
         <a href='//www.baidu.com'>www.baidu.com</a>
     </p>
 </body>
-</html>    "#
+</html>"#
     )
 }

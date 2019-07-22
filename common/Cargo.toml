@@ -10,7 +10,7 @@ serde = "1.0.91"
 serde_derive = "1.0.91"
 failure = "0.1.5"
 jsonwebtoken = "6.0.1"
-actix-redis = { git = "https://github.com/actix/actix-redis.git", features = ["web"] }
+actix-redis = { version = "0.6.1", features = ["web"] }
 diesel = { version = "1.4.2", features = ["postgres","chrono","serde_json", "r2d2"] }
 log = "0.4.6"
 dotenv = "0.14.1"
