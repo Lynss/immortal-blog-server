@@ -20,3 +20,4 @@ actix = { version = "0.8.1", features = ["http"] }
 actix-web-actors = "1.0.0"
 futures = "0.1.27"
 redis-async = "0.4.5"
+actix-redis = { version = "0.6.1", features = ["web"] }

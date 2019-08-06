@@ -1,14 +1,29 @@
 use crate::utils;
-use actix_web::{web::Payload, HttpRequest, HttpResponse};
+use crate::AppState;
+use actix_web::{
+    web::{Data, Payload, Query},
+    HttpRequest, HttpResponse,
+};
 use actix_web_actors::ws;
-use common::{ImmortalError, Result};
+use common::{Claims, ImmortalError, Result};
+use serde_derive::Deserialize;
 use share::structs::WebSocket;
 
+#[derive(Deserialize)]
+pub struct TokenBox {
+    token: String,
+}
 /// do websocket handshake and start `WebSocket` actor
-pub fn ws_message_handler(req: HttpRequest, stream: Payload) -> Result<HttpResponse> {
-    utils::get_user_id_from_header(&req).and_then(|id| {
-        let res = ws::start(WebSocket::new(id), &req, stream).map_err(ImmortalError::ignore);
-        println!("{:?}", res.as_ref().unwrap());
-        res
+pub fn ws_message_handler(
+    req: HttpRequest,
+    state: Data<AppState>,
+    token_box: Query<TokenBox>,
+    stream: Payload,
+) -> Result<HttpResponse> {
+    let token = &token_box.token;
+    utils::jwt_decode(token.clone(), None).and_then(|claims: Claims| {
+        let redis_addr = state.redis.clone();
+        ws::start(WebSocket::new(claims.id, redis_addr), &req, stream)
+            .map_err(ImmortalError::ignore)
     })
 }

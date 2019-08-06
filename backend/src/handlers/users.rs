@@ -1,16 +1,21 @@
 use crate::utils;
 use crate::AppState;
 use actix_web::web::{Data, HttpRequest, Json};
-use common::{extractors::ComplexQuery, EmailMessage, HandlerResponse, ImmortalError};
+use chrono::Utc;
+use common::configs::ACTIVATED_EMAIL_EXPIRE_TIME;
+use common::{
+    extractors::ComplexQuery, ActivatedEmailClaims, EmailMessage, HandlerResponse, ImmortalError,
+};
 use immortal_blog_derive::require_permissions;
 use share::{
     domains::ImmortalUser,
     structs::{
         ActivatedUsers, CheckRepeatedUser, FindUserByName, FindUsers, ForbiddenUsers,
-        GetAuthorOptions, SelectOption, TableRequest, TableResponse, UserAndPrivilegesInfo,
-        UserConditions, UserInfo,
+        GetAuthorOptions, Messenger, SelectOption, TableRequest, TableResponse,
+        UserAndPrivilegesInfo, UserConditions, UserInfo,
     },
 };
+use std::env;
 
 #[require_permissions(user = "2")]
 pub fn get_users(
@@ -90,15 +95,24 @@ pub fn activated_users(
     users: Json<ActivatedUsers>,
     state: Data<AppState>,
 ) -> impl HandlerResponse<()> {
+    let redis = &state.redis;
+    let redis = redis.clone();
+    let ids = users.into_inner().ids;
+    let notify_ids = ids.clone();
     state
         .db
-        .send(FindUsers {
-            ids: users.into_inner().ids,
-        })
+        .send(FindUsers { ids: ids.clone() })
         .map_err(ImmortalError::ignore)
         .flatten()
-        .and_then(|users| {
-            let content = utils::create_active_email();
+        .and_then(move |users| {
+            let expire = Utc::now().timestamp();
+            let claims = ActivatedEmailClaims {
+                exp: expire + ACTIVATED_EMAIL_EXPIRE_TIME,
+                ids,
+            };
+            let token = utils::jwt_encode(&claims, None);
+            let content = utils::create_active_email(token);
+            let email_user = env::var("EMAIL").unwrap();
             let tos = users
                 .iter()
                 .map(|user| (user.email.to_owned(), user.nickname.to_owned()))
@@ -106,11 +120,32 @@ pub fn activated_users(
             let message = EmailMessage {
                 tos,
                 content,
-                from: ("ly1169134156@163.com", "Immortal Blog"),
-                subject: "Activate Account",
+                from: (email_user, "Immortal Blog"),
+                subject: "Activated Account",
                 attachment_file: None,
             };
             utils::send_mail(message)
+        })
+        .and_then(move |_| {
+            //Send message to redis
+            let messages = notify_ids
+                .iter()
+                .map(|id| {
+                    let created_at = Utc::now().naive_local();
+                    let messenger = Messenger {
+                        message_type: "notifications".to_owned(),
+                        title: "Welcome to activate".to_owned(),
+                        content: "Thank you for your activity".to_owned(),
+                        href: None,
+                        img: Some(utils::get_assets_location("/activation.svg".to_owned())),
+                        created_at,
+                    };
+                    (id.to_owned(), vec![messenger])
+                })
+                .collect();
+            //Notify server to push message to client
+            utils::produce_message(&redis, messages)
+                .and_then(move |_| utils::notify_fetch_message(&redis, &notify_ids))
         })
         .map(utils::success)
 }

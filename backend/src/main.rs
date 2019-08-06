@@ -38,7 +38,7 @@ fn main() {
             .service(web::resource("/upload").route(web::post().to_async(handlers::upload_file)))
             //static files
             .service(Files::new("/static", "./static").show_files_listing())
-            .service(web::resource("/ws/").route(web::get().to(handlers::ws_message_handler)))
+            .service(web::resource("/ws").route(web::get().to(handlers::ws_message_handler)))
             .service(
                 web::scope("/api")
                     .service(
@@ -121,7 +121,7 @@ fn main() {
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen(l).unwrap()
     } else {
-        server.bind(backend_server_address).unwrap()
+        server.bind("localhost:8083").unwrap()
     };
     let _ = server.run();
 }

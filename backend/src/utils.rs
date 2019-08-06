@@ -2,13 +2,14 @@ use crate::AppState;
 use actix_redis::{Command, RespValue};
 use actix_web::{web::Data, FromRequest, HttpRequest};
 pub use common::utils::*;
-use common::{configs::USER_PREFIX_KEY, ImmortalError, Result};
+use common::{configs::USER_PREFIX_KEY, Claims, ImmortalError, Result};
 use futures::{
     future::{self, join_all, IntoFuture},
     Future,
 };
 use redis_async::resp::FromResp;
 use share::structs::{Privileges, UserAndPrivilegesInfo, UserId, UserInfo};
+pub use share::utils::*;
 use std::{cmp, collections::HashMap};
 
 pub fn get_user_and_privileges_info(
@@ -120,7 +121,7 @@ pub fn get_user_id_from_header(req: &HttpRequest) -> Result<i32> {
             });
         }
     };
-    jwt_decode(token, None).map(|claims| claims.id)
+    jwt_decode(token, None).map(|claims: Claims| claims.id)
 }
 
 pub fn get_user_and_privileges_info_from_request(
