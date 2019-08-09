@@ -30,9 +30,7 @@ pub fn get_users(
 }
 
 #[require_permissions(user = "2")]
-pub fn get_author_options(
-    state: Data<AppState>,
-) -> impl categoriesHandlerResponse<Vec<SelectOption>> {
+pub fn get_author_options(state: Data<AppState>) -> impl HandlerResponse<Vec<SelectOption>> {
     state
         .db
         .send(GetAuthorOptions)
