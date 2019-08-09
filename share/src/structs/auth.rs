@@ -74,6 +74,7 @@ pub struct Privileges {
     pub permissions: HashMap<String, i32>,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
 pub struct UserAndPrivilegesInfo(pub UserInfo, pub Privileges);
 
 impl From<AuthInfo> for UserAndPrivilegesInfo {

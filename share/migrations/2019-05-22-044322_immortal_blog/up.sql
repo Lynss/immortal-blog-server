@@ -14,6 +14,7 @@ create table if not exists immortal_users
     id         serial primary key,
     nickname   varchar   not null,
     password   varchar   not null,
+--  这里设计有问题，简单的系统应该只用单个的角色就好了。。。
     roles      int[]     not null default array [2],
     email      varchar   not null,
     phone      varchar,

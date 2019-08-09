@@ -2,6 +2,7 @@ use actix::Message;
 
 use crate::{
     domains::ImmortalUser,
+    schema::immortal_users,
     structs::{TableRequest, TableResponse, TimeRange, UserAndPrivilegesInfo, UserInfo},
 };
 use common::Result;
@@ -55,8 +56,8 @@ impl Message for FindUserByName {
 }
 
 #[derive(Deserialize)]
-pub struct ActivatedUsers {
-    pub ids: Vec<i32>,
+pub struct ActivatedUser {
+    pub id: i32,
 }
 
 pub struct FindUsers {
@@ -65,4 +66,35 @@ pub struct FindUsers {
 
 impl Message for FindUsers {
     type Result = Result<Vec<ImmortalUser>>;
+}
+
+#[derive(Deserialize)]
+pub struct TokenBox {
+    pub token: String,
+}
+
+pub struct ActivatingUser {
+    pub id: i32,
+    pub roles: Vec<i32>,
+}
+
+impl Message for ActivatingUser {
+    type Result = Result<usize>;
+}
+
+#[derive(Deserialize, AsChangeset)]
+#[table_name = "immortal_users"]
+pub struct UserSettingsInfo {
+    pub nickname: String,
+    pub email: String,
+    pub phone: Option<String>,
+    pub sex: i32,
+    pub roles: Vec<i32>,
+    pub avatar: Option<String>,
+}
+
+pub struct UserSettingsUpdate(pub i32, pub UserSettingsInfo);
+
+impl Message for UserSettingsUpdate {
+    type Result = Result<usize>;
 }

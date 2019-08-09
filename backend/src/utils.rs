@@ -73,7 +73,7 @@ pub fn storage_user_and_privileges_info(
         })
 }
 
-pub fn get_user_and_privileges_info_from_session(
+pub fn get_user_and_privileges_info_from_redis(
     id: i32,
     req: &HttpRequest,
 ) -> impl Future<Item = UserAndPrivilegesInfo, Error = ImmortalError> {
@@ -128,7 +128,7 @@ pub fn get_user_and_privileges_info_from_request(
     req: &HttpRequest,
 ) -> impl Future<Item = UserAndPrivilegesInfo, Error = ImmortalError> {
     get_user_id_from_header(req)
-        .map(|id| get_user_and_privileges_info_from_session(id, req))
+        .map(|id| get_user_and_privileges_info_from_redis(id, req))
         .into_future()
         .flatten()
 }

@@ -6,13 +6,8 @@ use actix_web::{
 };
 use actix_web_actors::ws;
 use common::{Claims, ImmortalError, Result};
-use serde_derive::Deserialize;
-use share::structs::WebSocket;
+use share::structs::{TokenBox, WebSocket};
 
-#[derive(Deserialize)]
-pub struct TokenBox {
-    token: String,
-}
 /// do websocket handshake and start `WebSocket` actor
 pub fn ws_message_handler(
     req: HttpRequest,

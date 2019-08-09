@@ -4,9 +4,9 @@ use crate::{
     domains::ImmortalUser,
     schema,
     structs::{
-        AuthInfo, CheckRepeatedUser, FindUserByName, FindUsers, ForbiddenUsers, GetAuthorOptions,
-        OrderInfo, Pagination, TableRequest, TableResponse, UserAndPrivilegesInfo, UserConditions,
-        UserInfo,
+        ActivatingUser, AuthInfo, CheckRepeatedUser, FindUserByName, FindUsers, ForbiddenUsers,
+        GetAuthorOptions, OrderInfo, Pagination, TableRequest, TableResponse,
+        UserAndPrivilegesInfo, UserConditions, UserInfo, UserSettingsUpdate,
     },
     DBExecutor,
 };
@@ -191,5 +191,26 @@ impl Handler<FindUsers> for DBExecutor {
         utils::log_sql(&sql);
         sql.get_results::<ImmortalUser>(connection)
             .map_err(ImmortalError::ignore)
+    }
+}
+
+impl Handler<ActivatingUser> for DBExecutor {
+    type Result = Result<usize>;
+    fn handle(&mut self, user: ActivatingUser, _: &mut Self::Context) -> Self::Result {
+        let connection: &PgConnection = &self.0.get().unwrap();
+        let sql =
+            update(immortal_users.find(user.id)).set((activated.eq(true), roles.eq(user.roles)));
+        utils::log_sql(&sql);
+        sql.execute(connection).map_err(ImmortalError::ignore)
+    }
+}
+
+impl Handler<UserSettingsUpdate> for DBExecutor {
+    type Result = Result<usize>;
+    fn handle(&mut self, message: UserSettingsUpdate, _: &mut Self::Context) -> Self::Result {
+        let connection: &PgConnection = &self.0.get().unwrap();
+        let sql = update(immortal_users.find(message.0)).set(message.1);
+        utils::log_sql(&sql);
+        sql.execute(connection).map_err(ImmortalError::ignore)
     }
 }

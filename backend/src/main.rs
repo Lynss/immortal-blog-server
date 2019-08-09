@@ -57,12 +57,23 @@ fn main() {
                                     .route(web::put().to_async(handlers::forbid_users)),
                             )
                             .service(
-                                web::resource("/activated")
-                                    .route(web::post().to_async(handlers::activated_users)),
+                                web::resource("/activated_email")
+                                    .route(web::post().to_async(handlers::send_activated_email)),
                             )
                             .service(
-                                web::resource("/settings")
-                                    .route(web::get().to_async(handlers::get_user_settings)),
+                                web::scope("/settings")
+                                    .service(
+                                        web::resource("").route(
+                                            web::get().to_async(handlers::get_user_settings),
+                                        ),
+                                    )
+                                    .service(web::resource("/{id}").route(
+                                        web::put().to_async(handlers::update_user_settings),
+                                    )),
+                            )
+                            .service(
+                                web::resource("/activation")
+                                    .route(web::put().to_async(handlers::active_user)),
                             )
                             .service(
                                 web::resource("/options")

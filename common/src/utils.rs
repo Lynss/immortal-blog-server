@@ -152,7 +152,7 @@ pub fn create_active_email(token: String) -> String {
     <p>Thank you for your confirmation!</p>
     <p>
         Click link below to activate your account<br>
-        <a href='{}/activated-page/email?token={}'>前往激活</a>
+        <a href='{}/auth/activation?token={}'>前往激活</a>
     </p>
 </body>
 </html>"#,
@@ -162,5 +162,5 @@ pub fn create_active_email(token: String) -> String {
 
 pub fn get_assets_location(name: String) -> String {
     let backend_server_address = env::var("BACKEND_SERVER_ADDRESS").unwrap();
-    format!("{}/{}", backend_server_address, name)
+    format!("{}/static/{}", backend_server_address, name)
 }

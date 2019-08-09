@@ -6,7 +6,6 @@ use common::{
     utils as common_utils, ImmortalError, RedisActor,
 };
 use futures::{future::join_all, Future};
-use std::collections::HashMap;
 
 pub fn notify_fetch_message(
     redis: &Addr<RedisActor>,
@@ -33,7 +32,7 @@ pub fn notify_fetch_message(
 
 pub fn produce_message(
     redis: &Addr<RedisActor>,
-    messages: HashMap<i32, Vec<Messenger>>,
+    messages: Vec<(i32, Vec<Messenger>)>,
 ) -> impl Future<Item = (), Error = ImmortalError> {
     join_all(
         messages
