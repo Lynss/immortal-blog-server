@@ -1,4 +1,3 @@
-#![feature(custom_attribute)]
 extern crate actix_web;
 #[macro_use]
 extern crate diesel;
